@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const siteUrl = 'https://www.pasadenashadesandshutters.com';
@@ -39,6 +40,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XHKPP6CVFR');`}
         </Script>
+        <Analytics />
       </body>
     </html>
   );
