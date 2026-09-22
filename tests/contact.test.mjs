@@ -8,6 +8,7 @@ const values = {
   SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+  NODE_ENV: process.env.NODE_ENV,
 };
 
 const payload = { name: 'Test Visitor', email: 'VISITOR@example.com', phone: '8185550100', message: 'I would like a consultation.', consent: true, verification: 'challenge' };
@@ -18,7 +19,7 @@ const request = (body = payload, origin = 'https://www.pasadenashadesandshutters
 });
 
 test('contact intake verifies challenge and writes only to the Pasadena tenant', async () => {
-  process.env.SUPABASE_URL = 'https://supabase.example';
+  process.env.SUPABASE_URL = 'http://127.0.0.1:56521';
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-only-key';
   process.env.TURNSTILE_SECRET_KEY = 'test-only-secret';
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = 'test-only-site';
@@ -32,7 +33,7 @@ test('contact intake verifies challenge and writes only to the Pasadena tenant',
     const saved = await POST(request());
     assert.equal(saved.status, 201);
     assert.equal(calls.length, 2);
-    assert.equal(calls[1].url, 'https://supabase.example/rest/v1/contact_submissions');
+    assert.equal(calls[1].url, 'http://127.0.0.1:56521/rest/v1/contact_submissions');
     assert.deepEqual(JSON.parse(calls[1].options.body), {
       tenant_slug: 'pasadena-shades-and-shutters',
       name: 'Test Visitor', email: 'visitor@example.com', phone: '8185550100', message: 'I would like a consultation.',
@@ -47,6 +48,36 @@ test('contact intake verifies challenge and writes only to the Pasadena tenant',
 
     globalThis.fetch = async () => Response.json({ success: true, action: 'contact', hostname: 'other.example' });
     assert.equal((await POST(request())).status, 400);
+
+    calls.length = 0;
+    process.env.NODE_ENV = 'development';
+    process.env.SUPABASE_URL = 'http://localhost:56521';
+    process.env.TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA';
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+    globalThis.fetch = async (url, options) => {
+      calls.push({ url: String(url), options });
+      return new Response(null, { status: 201 });
+    };
+    const localRequest = new Request('http://localhost:3188/api/contact/', {
+      method: 'POST',
+      headers: { origin: 'http://localhost:3188', 'content-type': 'application/json' },
+      body: JSON.stringify({ ...payload, verification: 'XXXX.DUMMY.TOKEN.XXXX' }),
+    });
+    assert.equal((await POST(localRequest)).status, 201);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].url, 'http://localhost:56521/rest/v1/contact_submissions');
+
+    calls.length = 0;
+    process.env.NODE_ENV = 'production';
+    process.env.SUPABASE_URL = 'http://supabase.example';
+    process.env.TURNSTILE_SECRET_KEY = 'test-only-secret';
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY = 'test-only-site';
+    globalThis.fetch = async (url, options) => {
+      calls.push({ url: String(url), options });
+      return Response.json({ success: true, action: 'contact', hostname: 'www.pasadenashadesandshutters.com' });
+    };
+    assert.equal((await POST(request())).status, 503);
+    assert.equal(calls.length, 1);
   } finally {
     globalThis.fetch = originalFetch;
     for (const [key, value] of Object.entries(values)) {

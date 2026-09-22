@@ -38,17 +38,26 @@ export async function POST(request: Request) {
   if (!token || token.length > 2048) return reply(400, 'Please complete the security check.');
 
   try {
-    const challenge = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      body: new URLSearchParams({ secret: turnstileSecret, response: token }),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!challenge.ok) return reply(503, unavailable);
-    const result = await challenge.json();
-    if (result.success !== true || result.action !== 'contact' || result.hostname !== requestUrl.hostname) return reply(400, 'Please complete the security check again.');
+    const localTurnstileTest =
+      process.env.NODE_ENV !== 'production' &&
+      ['127.0.0.1', 'localhost'].includes(requestUrl.hostname) &&
+      process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY === '1x00000000000000000000AA' &&
+      turnstileSecret === '1x0000000000000000000000000000000AA' &&
+      token === 'XXXX.DUMMY.TOKEN.XXXX';
+    if (!localTurnstileTest) {
+      const challenge = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: new URLSearchParams({ secret: turnstileSecret, response: token }),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!challenge.ok) return reply(503, unavailable);
+      const result = await challenge.json();
+      if (result.success !== true || result.action !== 'contact' || result.hostname !== requestUrl.hostname) return reply(400, 'Please complete the security check again.');
+    }
 
     const supabase = new URL(url);
-    if (supabase.protocol !== 'https:') return reply(503, unavailable);
+    const localSupabase = ['127.0.0.1', 'localhost'].includes(supabase.hostname);
+    if (supabase.protocol !== 'https:' && !(localSupabase && supabase.protocol === 'http:')) return reply(503, unavailable);
     const insert = await fetch(new URL('/rest/v1/contact_submissions', supabase), {
       method: 'POST',
       headers: {
@@ -60,9 +69,17 @@ export async function POST(request: Request) {
       body: JSON.stringify({ tenant_slug: 'pasadena-shades-and-shutters', name, email, phone, message, consent_at: new Date().toISOString() }),
       signal: AbortSignal.timeout(10000),
     });
-    if (!insert.ok) return reply(503, 'We could not save your request. Please try again or call 818-618-5288.');
+    if (!insert.ok) {
+      console.error('Contact submission insert failed.', { status: insert.status });
+      return reply(503, 'We could not save your request. Please try again or call 818-618-5288.');
+    }
     return Response.json({ ok: true }, { status: 201, headers: { 'Cache-Control': 'no-store' } });
-  } catch {
+  } catch (error) {
+    const cause = error instanceof Error && 'cause' in error ? error.cause : undefined;
+    console.error('Contact submission request failed.', {
+      error: error instanceof Error ? error.name : 'UnknownError',
+      cause: cause && typeof cause === 'object' && 'code' in cause ? cause.code : undefined,
+    });
     return reply(503, 'We could not save your request. Please try again or call 818-618-5288.');
   }
 }

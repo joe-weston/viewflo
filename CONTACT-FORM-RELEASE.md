@@ -6,3 +6,7 @@
 4. Assign a person to review new rows and contact customers. The form stores requests; it does not send email notifications or book appointments.
 
 Until configuration is complete, the endpoint returns 503 and the page directs visitors to call 818-618-5288. No customer data is sent to analytics by this form.
+
+## Local verification
+
+The repository includes a local Supabase configuration with project ID `viewflo-contact-e2e-20260922` and dedicated `565xx` ports. A gitignored `.env.local` can point to that stack and use Cloudflare's official test keys. The API accepts local HTTP Supabase only for `localhost` or `127.0.0.1`, and accepts Cloudflare's dummy token only in non-production mode on a local hostname with the exact official test key pair.
