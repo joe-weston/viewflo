@@ -78,6 +78,10 @@ export function ContactForm({ siteKey }: { siteKey: string }) {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Your message could not be sent.');
+      if (widgetId.current) {
+        window.turnstile?.remove(widgetId.current);
+        widgetId.current = null;
+      }
       setDone(true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Your message could not be sent.');

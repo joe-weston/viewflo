@@ -16,7 +16,7 @@ Replace the broken Wufoo contact mount on `/contact-us.php/` with a first-party 
 
 Screenshots were opened and inspected. The large blank area above the form comes from the preserved map embed on the mirrored page; it predates this form change. No new clipping or nested scroll was observed. Labels and controls remain keyboard accessible with visible focus styles. The Turnstile widget was simulated in the local error-state test because production keys were unavailable.
 
-Local full-flow verification used the uniquely named `viewflo-contact-e2e-20260922` Supabase stack on dedicated `565xx` ports and Cloudflare's documented test key pair. Five local receipts were inspected across direct probes and browser submissions; all five had the Pasadena tenant slug, consent timestamp, and `new` status. Database checks confirmed RLS enabled and anonymous reads/inserts denied. Wrong-origin and honeypot requests returned 403 and 400 without adding rows.
+Local full-flow verification used the uniquely named `viewflo-contact-e2e-20260922` Supabase stack on dedicated `565xx` ports and Cloudflare's documented test key pair. Seven local receipts were inspected across direct probes and browser submissions; all seven had the Pasadena tenant slug, consent timestamp, and `new` status. The final two-submission browser run returned 201 twice with no console errors or warnings. Database checks confirmed RLS enabled and anonymous reads/inserts denied. Wrong-origin and honeypot requests returned 403 and 400 without adding rows.
 
 ## Release disposition
 
