@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { ContactForm } from './contact-form';
 
 declare global {
   interface Window {
@@ -13,23 +15,14 @@ declare global {
   }
 }
 
-const forms = [
+const otherForms = [
   { id: 'q9zvpb00j0kxm1', height: '593' },
-  { id: 'qh61a851fzs4gd', height: '855' },
   { id: 'qo4vetx1v30z7d', height: '645' },
 ];
 
 function loadWufoo() {
   if (window.__pasadenaWufooLoaded) return window.__pasadenaWufooLoaded;
-
   window.__pasadenaWufooLoaded = new Promise<void>((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>('script[src*="secure.wufoo.com/scripts/embed/form.js"]');
-    if (existing) {
-      existing.addEventListener('load', () => resolve(), { once: true });
-      if (window.WufooForm) resolve();
-      return;
-    }
-
     const script = document.createElement('script');
     script.src = 'https://secure.wufoo.com/scripts/embed/form.js';
     script.async = true;
@@ -37,46 +30,33 @@ function loadWufoo() {
     script.onerror = () => reject(new Error('Unable to load Wufoo embed script'));
     document.body.appendChild(script);
   });
-
   return window.__pasadenaWufooLoaded;
 }
 
-export function LegacyWufooEmbeds() {
+export function LegacyWufooEmbeds({ contactSiteKey }: { contactSiteKey: string }) {
+  const [contactMount, setContactMount] = useState<HTMLElement | null>(null);
+
   useEffect(() => {
+    const mount = document.getElementById('wufoo-qh61a851fzs4gd');
+    if (mount) {
+      mount.replaceChildren();
+      setContactMount(mount);
+    }
+    if (!otherForms.some((form) => document.getElementById(`wufoo-${form.id}`))) return;
     let cancelled = false;
-
-    loadWufoo()
-      .then(() => {
-        if (cancelled || !window.WufooForm) return;
-        window.__pasadenaWufooMounted ||= {};
-
-        for (const form of forms) {
-          const mount = document.getElementById(`wufoo-${form.id}`);
-          if (!mount || window.__pasadenaWufooMounted[form.id]) continue;
-          window.__pasadenaWufooMounted[form.id] = true;
-
-          const wufoo = new window.WufooForm();
-          wufoo.initialize({
-            userName: 'footbridgesupport',
-            formHash: form.id,
-            autoResize: true,
-            height: form.height,
-            async: true,
-            host: 'wufoo.com',
-            header: 'show',
-            ssl: true,
-          });
-          wufoo.display();
-        }
-      })
-      .catch(() => {
-        // Keep the legacy fallback link visible when Wufoo is unavailable.
-      });
-
-    return () => {
-      cancelled = true;
-    };
+    loadWufoo().then(() => {
+      if (cancelled || !window.WufooForm) return;
+      window.__pasadenaWufooMounted ||= {};
+      for (const form of otherForms) {
+        if (!document.getElementById(`wufoo-${form.id}`) || window.__pasadenaWufooMounted[form.id]) continue;
+        window.__pasadenaWufooMounted[form.id] = true;
+        const wufoo = new window.WufooForm();
+        wufoo.initialize({ userName: 'footbridgesupport', formHash: form.id, autoResize: true, height: form.height, async: true, host: 'wufoo.com', header: 'show', ssl: true });
+        wufoo.display();
+      }
+    }).catch(() => { /* Legacy links remain available. */ });
+    return () => { cancelled = true; };
   }, []);
 
-  return null;
+  return contactMount ? createPortal(<ContactForm siteKey={contactSiteKey} />, contactMount) : null;
 }

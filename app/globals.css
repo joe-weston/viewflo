@@ -9,3 +9,22 @@ body {
 .next-migration-note {
   display: none;
 }
+
+.viewflo-contact { box-sizing: border-box; max-width: 720px; margin: 24px auto; padding: 28px; border: 1px solid #d8d1c7; border-radius: 12px; background: #fff; color: #29251f; font: 16px/1.5 Arial, sans-serif; }
+.viewflo-contact * { box-sizing: border-box; }
+.wrap .viewflo-contact div { float: none; }
+.viewflo-contact h2 { margin: 0 0 8px; font-size: 28px; line-height: 1.2; }
+.viewflo-contact p { margin: 0 0 20px; }
+.wrap .viewflo-contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.viewflo-contact label { display: block; margin: 0 0 16px; font-weight: 600; }
+.viewflo-contact input:not([type='checkbox']), .viewflo-contact textarea { display: block; width: 100%; min-height: 44px; margin-top: 6px; padding: 10px 12px; border: 1px solid #777; border-radius: 5px; background: white; color: #29251f; font: inherit; }
+.viewflo-contact textarea { resize: vertical; }
+.viewflo-contact .viewflo-contact-consent { display: flex; align-items: flex-start; gap: 10px; font-weight: 400; }
+.viewflo-contact-consent input { width: 20px; height: 20px; flex: none; margin: 2px 0 0; }
+.viewflo-contact-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.viewflo-contact-verification { min-height: 65px; }
+.viewflo-contact .viewflo-contact-error { color: #9b1c1c; }
+.viewflo-contact button { min-height: 48px; padding: 10px 24px; border: 0; border-radius: 5px; background: #704b28; color: white; font: inherit; font-weight: 700; cursor: pointer; }
+.viewflo-contact button:disabled { opacity: .55; cursor: not-allowed; }
+.viewflo-contact :focus-visible { outline: 3px solid #185ea8; outline-offset: 2px; }
+@media (max-width: 600px) { .viewflo-contact { padding: 20px; } .wrap .viewflo-contact-grid { grid-template-columns: 1fr; gap: 0; } }

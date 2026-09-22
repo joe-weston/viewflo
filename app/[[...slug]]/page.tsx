@@ -37,11 +37,18 @@ export default async function LegacyPage({ params }: PageProps) {
   const page = getLegacyPage(slug);
   if (!page) notFound();
 
+  const html = page.routePath === 'contact-us.php'
+    ? page.html.replace(
+        /<div id="wufoo-qh61a851fzs4gd">[\s\S]*?<\/div>/,
+        '<div id="wufoo-qh61a851fzs4gd"><p>Loading the contact form. You can also call <a href="tel:+18186185288">818-618-5288</a>.</p></div>',
+      )
+    : page.html;
+
   return (
     <>
       <div className="next-migration-note" data-source={page.sourcePath} data-route={page.routePath} />
-      <div dangerouslySetInnerHTML={{ __html: page.html }} />
-      <LegacyWufooEmbeds />
+      <div dangerouslySetInnerHTML={{ __html: html }} />
+      <LegacyWufooEmbeds contactSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''} />
     </>
   );
 }
