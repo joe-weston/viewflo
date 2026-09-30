@@ -1,3 +1,5 @@
+import { requestPortal } from "../../../../../lib/portal-request";
+import { tenantPath } from "../../../../../lib/portal-urls";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -17,6 +19,7 @@ export default async function Agreement({
   if (!["terms", "privacy", "sow"].includes(kind)) notFound();
   const ctx = await tenantContext(tenant);
   if (!ctx) return null;
+  const location = await requestPortal(tenant);
   const docs = await agreements(ctx.db);
   if (kind === "sow") {
     const sow = await tenantSow(ctx.db, ctx.tenant.id);
@@ -60,7 +63,10 @@ export default async function Agreement({
         <h2>{doc.title}</h2>
         <p>Version {doc.version}</p>
         <a
-          href={`/${tenant}/admin/agreements/${kind}/download?version=${encodeURIComponent(doc.version)}`}
+          href={
+            tenantPath(location, `/admin/agreements/${kind}/download`) +
+            `?version=${encodeURIComponent(doc.version)}`
+          }
         >
           Download this document
         </a>
@@ -76,12 +82,15 @@ export default async function Agreement({
           {new Date(saved.accepted_at).toLocaleDateString("en-US", {
             timeZone: "UTC",
           })}
-          . <Link href={`/${tenant}/admin/billing`}>Continue to billing</Link>
+          .{" "}
+          <Link href={tenantPath(location, "/admin/billing")}>
+            Continue to billing
+          </Link>
         </p>
       ) : !billingRole(ctx.role) ? (
         <p>A billing administrator must complete this step.</p>
       ) : kind === "privacy" && !termsAccepted ? (
-        <Link href={`/${tenant}/admin/agreements/terms`}>
+        <Link href={tenantPath(location, "/admin/agreements/terms")}>
           Review and accept the terms first
         </Link>
       ) : (

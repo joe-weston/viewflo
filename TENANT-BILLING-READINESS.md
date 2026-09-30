@@ -1,5 +1,9 @@
 # Tenant billing implementation — release gates
 
+## September 30 manager portal update
+
+The tenant-facing password/signup flow is replaced by operator-provisioned manager magic-link access. Current setup and verification requirements are in MANAGER-BILLING-SETUP.md. This supersedes earlier signup-confirmation instructions; do not enable self-service tenant enrollment. Callback email-template and redirect configuration are required before activation. The custom-domain portal uses `/admin/billing/` with clean same-site navigation and Stripe returns; platform access uses the tenant-prefixed equivalent. Billing now includes subscription summary, customer-scoped issued invoice/payment history and policy links. Card editing remains in Stripe. No production configuration or release approval is implied by the local commits.
+
 Local branch: codex/tenant-billing-agreements. Preview port 3188. Same GitHub repository joe-weston/viewflo; independent local clone preserves Pasadena source/history and dirty replacement work. Nothing deployed, committed, pushed, or applied to Supabase. Current production main 997e5d5 is unchanged.
 
 ## Configuration and approval required

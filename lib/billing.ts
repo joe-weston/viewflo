@@ -4,19 +4,10 @@ import { randomUUID } from "node:crypto";
 import { isHostingPrice } from "./commercial-policy";
 import { allAccepted, billingRole, requireTestKey } from "./portal-policy";
 import { agreements, operatorDb, tenantContext } from "./portal";
+import { requestPortal } from "./portal-request";
+import { billingPath } from "./portal-urls";
 export function stripeClient() {
   return new Stripe(requireTestKey(process.env.STRIPE_SECRET_KEY));
-}
-export function appOrigin() {
-  const value = process.env.VIEWFLOW_APP_URL;
-  if (!value) throw new Error("Billing unavailable");
-  const url = new URL(value);
-  if (
-    url.protocol !== "https:" &&
-    !["localhost", "127.0.0.1"].includes(url.hostname)
-  )
-    throw new Error("Invalid application origin");
-  return url.origin;
 }
 export async function billingContext(slug: string, requireAcceptance = true) {
   const ctx = await tenantContext(slug);
@@ -182,7 +173,8 @@ export async function checkout(slug: string) {
   const createdAt = Math.floor(Date.parse(attempt.created_at) / 1000);
   if (Date.now() / 1000 - createdAt > 1700)
     throw new Error("Checkout requires reconciliation");
-  const base = `${appOrigin()}/${slug}/admin/billing`;
+  const location = await requestPortal(slug);
+  const base = location.origin + billingPath(location);
   const session = await stripe.checkout.sessions.create(
     {
       customer,
@@ -212,11 +204,12 @@ export async function portal(slug: string) {
     throw new Error("No billing account yet");
   const configuration = process.env.STRIPE_PORTAL_CONFIGURATION_ID;
   if (!configuration) throw new Error("Billing portal needs review");
+  const location = await requestPortal(slug);
   return (
     await ctx.stripe.billingPortal.sessions.create({
       customer: ctx.billing.stripe_customer_id,
       configuration,
-      return_url: `${appOrigin()}/${slug}/admin/billing`,
+      return_url: location.origin + billingPath(location),
     })
   ).url;
 }

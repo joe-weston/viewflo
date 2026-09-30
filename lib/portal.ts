@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import { createHash } from "node:crypto";
 import { redirect } from "next/navigation";
 import { currentPair, safeSlug, type LegalDocument } from "./portal-policy";
+import { requestPortal } from "./portal-request";
+import { loginPath } from "./portal-urls";
 export function authReady() {
   return !!(
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -42,13 +44,20 @@ export function operatorDb() {
   );
 }
 export async function tenantContext(slug: string) {
-  if (!safeSlug(slug) || !authReady()) return null;
+  if (!safeSlug(slug)) return null;
+  let location;
+  try {
+    location = await requestPortal(slug);
+  } catch {
+    return null;
+  }
+  if (!authReady()) return null;
   const db = await supabase();
   const {
     data: { user },
     error,
   } = await db.auth.getUser();
-  if (error || !user) redirect(`/auth?tenant=${encodeURIComponent(slug)}`);
+  if (error || !user) redirect(loginPath(location));
   const { data: tenant } = await db
     .from("vf_tenants")
     .select("id,slug,name")

@@ -1,8 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { authReady, supabase } from "../../lib/portal";
+import { headers } from "next/headers";
+import { tenantForHost } from "../../lib/tenant-routing";
 export const dynamic = "force-dynamic";
 export default async function Account() {
+  if (tenantForHost((await headers()).get("host"))) redirect("/admin/billing");
   if (!authReady()) redirect("/auth");
   const db = await supabase();
   const {

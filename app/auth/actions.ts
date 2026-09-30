@@ -1,34 +1,48 @@
 "use server";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { authReady, supabase } from "../../lib/portal";
 import { safeSlug } from "../../lib/portal-policy";
-import { appOrigin } from "../../lib/billing";
+import { requestPortal } from "../../lib/portal-request";
+import { loginPath } from "../../lib/portal-urls";
 export async function authenticate(form: FormData) {
   const tenant = String(form.get("tenant") ?? "");
-  if (!safeSlug(tenant) || !authReady()) redirect("/auth?error=unavailable");
+  if (!safeSlug(tenant)) redirect("/auth?error=unavailable");
+  const location = await requestPortal(tenant);
+  const login = loginPath(location);
+  if (!authReady()) redirect(`${login}&error=unavailable`);
   const email = String(form.get("email") ?? "").trim();
-  const password = String(form.get("password") ?? "");
-  if (email.length > 254 || password.length < 8 || password.length > 128)
-    redirect(`/auth?tenant=${tenant}&error=credentials`);
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    redirect(`${login}&error=email`);
+  const jar = await cookies();
+  if (jar.get("vf_magic_link_cooldown"))
+    redirect(`${login}&message=check-email`);
   const db = await supabase();
-  if (form.get("mode") === "signup") {
-    // No slug-to-membership write. Account creation cannot claim an existing business.
-    const { error } = await db.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${appOrigin()}/auth/callback` },
-    });
-    if (error) redirect(`/auth?tenant=${tenant}&error=credentials`);
-    redirect(`/auth?tenant=${tenant}&message=check-email`);
-  }
-  const { error } = await db.auth.signInWithPassword({ email, password });
-  if (error) redirect(`/auth?tenant=${tenant}&error=credentials`);
-  redirect(`/${tenant}/admin`);
+  const callback = new URL("/auth/callback/", location.origin);
+  callback.searchParams.set("tenant", tenant);
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { shouldCreateUser: false, emailRedirectTo: callback.toString() },
+  });
+  jar.set("vf_magic_link_cooldown", String(Date.now() + 60_000), {
+    httpOnly: true,
+    secure: location.origin.startsWith("https:"),
+    sameSite: "lax",
+    path: "/auth",
+    maxAge: 60,
+  });
+  // Identical confirmation for unregistered addresses; Supabase enforces authoritative rate limits.
+  if (error && error.status && error.status >= 500)
+    redirect(`${login}&error=unavailable`);
+  redirect(`${login}&message=check-email`);
 }
-export async function signout() {
+export async function signout(form: FormData) {
+  const tenant = String(form.get("tenant") ?? "");
+  if (!safeSlug(tenant)) redirect("/auth");
+  const location = await requestPortal(tenant);
   if (authReady()) {
     const db = await supabase();
     await db.auth.signOut();
   }
-  redirect("/auth");
+  redirect(loginPath(location));
 }

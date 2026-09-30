@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { tenantContext } from "../../../lib/portal";
+import { requestPortal } from "../../../lib/portal-request";
+import { tenantPath, loginPath } from "../../../lib/portal-urls";
 import { signout } from "../../auth/actions";
+import { AdminNav } from "../../../src/components/AdminNav";
 export const dynamic = "force-dynamic";
+export const metadata = { robots: { index: false, follow: false } };
 export default async function AdminLayout({
   children,
   params,
@@ -11,37 +15,49 @@ export default async function AdminLayout({
 }) {
   const { tenant } = await params;
   const ctx = await tenantContext(tenant);
-  if (!ctx)
+  let location;
+  try {
+    location = await requestPortal(tenant);
+  } catch {
+    location = null;
+  }
+  if (!ctx || !location)
     return (
       <div className="portal-shell">
-        <Link href="/">ViewFlow</Link>
+        <Link href="/">Viewflo</Link>
         <h1>Workspace unavailable</h1>
         <p>
           Your account may not have access, or this workspace may not be ready.
           Contact your workspace administrator.
         </p>
-        <Link href="/auth">Return to sign in</Link>
+        <Link href={location ? loginPath(location) : "/auth"}>
+          Return to sign in
+        </Link>
       </div>
     );
   return (
-    <div className="portal-shell">
+    <div className="portal-shell admin-shell">
       <header className="portal-header">
-        <Link href="/">ViewFlow</Link>
+        <Link href={tenantPath(location)}>{ctx.tenant.name}</Link>
         <form action={signout}>
+          <input type="hidden" name="tenant" value={tenant} />
           <button className="secondary">Sign out</button>
         </form>
       </header>
-      <p className="eyebrow">BUSINESS WORKSPACE</p>
+      <p className="eyebrow">PRIVATE BUSINESS WORKSPACE</p>
       <h1>{ctx.tenant.name}</h1>
-      <nav aria-label="Workspace" className="portal-nav">
-        <Link href={`/${tenant}/admin`}>Overview</Link>
-        <Link href={`/${tenant}/admin/agreements/terms`}>Terms</Link>
-        <Link href={`/${tenant}/admin/agreements/privacy`}>Privacy</Link>
-        <Link href={`/${tenant}/admin/billing`}>Billing</Link>
-        <Link href={`/${tenant}/admin/agreements/sow`}>Services SOW</Link>
-        <Link href={`/${tenant}`}>Website preview</Link>
-      </nav>
+      <AdminNav
+        tenantPrefix={location.customDomain ? `/${tenant}` : ""}
+        items={[
+          { label: "Overview", href: tenantPath(location, "/admin") },
+          { label: "Billing", href: tenantPath(location, "/admin/billing") },
+          { label: "Website", href: tenantPath(location) },
+        ]}
+      />
       {children}
+      <footer className="admin-footer">
+        Your business workspace · Powered by Viewflo
+      </footer>
     </div>
   );
 }

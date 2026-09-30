@@ -22,9 +22,7 @@ export function normalizeHostname(value: string | null): string {
 }
 
 export function tenantForHost(value: string | null): string | null {
-  return PASADENA_HOSTS.has(normalizeHostname(value))
-    ? PASADENA_TENANT
-    : null;
+  return PASADENA_HOSTS.has(normalizeHostname(value)) ? PASADENA_TENANT : null;
 }
 
 export function shouldRewriteTenantPath(pathname: string): boolean {
@@ -36,7 +34,12 @@ export function shouldRewriteTenantPath(pathname: string): boolean {
   )
     return false;
 
-  if (STATIC_ASSET_PREFIXES.some((prefix) => pathname.startsWith(prefix)))
+  if (
+    STATIC_ASSET_PREFIXES.some(
+      (prefix) =>
+        pathname === prefix.slice(0, -1) || pathname.startsWith(prefix),
+    )
+  )
     return false;
 
   return !STATIC_ASSET_PATTERN.test(pathname);
@@ -50,10 +53,7 @@ export function tenantRewritePath(pathname: string, tenant: string): string {
 const PASADENA_ASSET_PATH =
   /^\/(?:ca-shutters|images|js|lightbox|shutter-projects)\//i;
 
-export function rewritePasadenaHtml(
-  html: string,
-  pagePrefix: string,
-): string {
+export function rewritePasadenaHtml(html: string, pagePrefix: string): string {
   return html.replace(
     /\b(href|src)=(['"])(.*?)\2/gi,
     (_match, attribute: string, quote: string, value: string) => {

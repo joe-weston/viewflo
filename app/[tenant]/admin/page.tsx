@@ -1,3 +1,5 @@
+import { requestPortal } from "../../../lib/portal-request";
+import { tenantPath } from "../../../lib/portal-urls";
 import Link from "next/link";
 import { tenantContext, agreements } from "../../../lib/portal";
 import { allAccepted } from "../../../lib/portal-policy";
@@ -11,6 +13,7 @@ export default async function Overview({
   const { tenant } = await params;
   const ctx = await tenantContext(tenant);
   if (!ctx) return null;
+  const location = await requestPortal(tenant);
   const docs = await agreements(ctx.db);
   const { data } = await ctx.db
     .from("vf_acceptances")
@@ -55,7 +58,10 @@ export default async function Overview({
       ) : (
         <Link
           className="portal-button"
-          href={`/${tenant}/admin/${done ? "billing" : "agreements/terms"}`}
+          href={tenantPath(
+            location,
+            `/admin/${done ? "billing" : "agreements/terms"}`,
+          )}
         >
           {done ? "Go to billing" : "Review terms"}
         </Link>
@@ -67,7 +73,12 @@ export default async function Overview({
             {history.map((doc) => (
               <li key={doc.id}>
                 <a
-                  href={`/${tenant}/admin/agreements/${doc.kind}/download?version=${encodeURIComponent(doc.version)}`}
+                  href={
+                    tenantPath(
+                      location,
+                      `/admin/agreements/${doc.kind}/download`,
+                    ) + `?version=${encodeURIComponent(doc.version)}`
+                  }
                 >
                   {doc.title} · {doc.version} · Download
                 </a>
