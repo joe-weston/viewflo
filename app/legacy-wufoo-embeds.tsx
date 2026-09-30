@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 declare global {
   interface Window {
@@ -14,27 +14,30 @@ declare global {
 }
 
 const forms = [
-  { id: 'q9zvpb00j0kxm1', height: '593' },
-  { id: 'qh61a851fzs4gd', height: '855' },
-  { id: 'qo4vetx1v30z7d', height: '645' },
+  { id: "q9zvpb00j0kxm1", height: "593" },
+  { id: "qh61a851fzs4gd", height: "855" },
+  { id: "qo4vetx1v30z7d", height: "645" },
 ];
 
 function loadWufoo() {
   if (window.__pasadenaWufooLoaded) return window.__pasadenaWufooLoaded;
 
   window.__pasadenaWufooLoaded = new Promise<void>((resolve, reject) => {
-    const existing = document.querySelector<HTMLScriptElement>('script[src*="secure.wufoo.com/scripts/embed/form.js"]');
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src*="secure.wufoo.com/scripts/embed/form.js"]',
+    );
     if (existing) {
-      existing.addEventListener('load', () => resolve(), { once: true });
+      existing.addEventListener("load", () => resolve(), { once: true });
       if (window.WufooForm) resolve();
       return;
     }
 
-    const script = document.createElement('script');
-    script.src = 'https://secure.wufoo.com/scripts/embed/form.js';
+    const script = document.createElement("script");
+    script.src = "https://secure.wufoo.com/scripts/embed/form.js";
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Unable to load Wufoo embed script'));
+    script.onerror = () =>
+      reject(new Error("Unable to load Wufoo embed script"));
     document.body.appendChild(script);
   });
 
@@ -57,13 +60,13 @@ export function LegacyWufooEmbeds() {
 
           const wufoo = new window.WufooForm();
           wufoo.initialize({
-            userName: 'footbridgesupport',
+            userName: "footbridgesupport",
             formHash: form.id,
             autoResize: true,
             height: form.height,
             async: true,
-            host: 'wufoo.com',
-            header: 'show',
+            host: "wufoo.com",
+            header: "show",
             ssl: true,
           });
           wufoo.display();

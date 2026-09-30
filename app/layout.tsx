@@ -1,46 +1,46 @@
-import type { Metadata, Viewport } from 'next';
-import Script from 'next/script';
-import { Analytics } from '@vercel/analytics/next';
-import './globals.css';
-
-const siteUrl = 'https://www.pasadenashadesandshutters.com';
-
+import type { Metadata } from "next";
+import { Fraunces, Inter } from "next/font/google";
+import "./globals.css";
+const displayFont = Fraunces({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+const bodyFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+});
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(
+    process.env.VIEWFLOW_APP_URL || "http://localhost:3188",
+  ),
   title: {
-    default: 'Pasadena Shades & Shutters | Montrose, CA',
-    template: '%s',
+    default: "ViewFlow | Business workspace",
+    template: "%s | ViewFlow",
   },
-  description:
-    'Pasadena Shades & Shutters is your trusted Pasadena Shutter Company. Give us a call for shutters, blinds, and shade installations in Pasadena.',
+  description: "Your business website and account, brought together.",
+  robots: { index: false, follow: false },
   openGraph: {
-    type: 'website',
-    siteName: 'Pasadena Shades & Shutters',
-    images: ['/images/logo.png'],
+    type: "website",
+    siteName: "ViewFlow",
+    images: ["/818aaed5-2de2-408a-9918-b48936405ebb.jpg"],
   },
 };
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-};
-
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" itemScope itemType="http://schema.org/ProfessionalService">
-      <head>
-        <link rel="stylesheet" href="/style.css" />
-      </head>
-      <body>
-        {children}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-XHKPP6CVFR" strategy="afterInteractive" />
-        <Script id="ga-init" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-XHKPP6CVFR');`}
-        </Script>
-        <Analytics />
+    <html lang="en">
+      <body className={`${displayFont.variable} ${bodyFont.variable}`}>
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
+        <main id="main-content">{children}</main>
       </body>
     </html>
   );

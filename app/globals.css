@@ -1,11 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.portal-shell {
+  max-width: 960px;
+  margin: auto;
+  padding: 32px 24px 72px;
+}
+.portal-header,
+.portal-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+}
+.portal-header {
+  justify-content: space-between;
+  margin-bottom: 48px;
+}
+.portal-shell h1 {
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(2.1rem, 5vw, 3.7rem);
+  line-height: 1.12;
+  margin: 20px 0;
+}
+.portal-shell h2 {
+  font-size: 1.7rem;
+  margin-bottom: 16px;
+}
+.portal-shell h3 {
+  font-size: 1.25rem;
+  margin-top: 30px;
+}
+.portal-shell p {
+  margin: 16px 0;
+  line-height: 1.7;
+}
+.portal-shell a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.portal-shell .eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.13em;
+  font-weight: 600;
+  margin-top: 32px;
+}
+.portal-card,
+.portal-document {
+  background: #fff;
+  border: 1px solid #dedbd5;
+  border-radius: 16px;
+  padding: 28px;
+  margin: 28px 0;
+}
+.portal-hero {
+  padding: 24px 0 48px;
+}
+.portal-hero p {
+  max-width: 640px;
+}
+.portal-shell label {
+  display: block;
+  margin: 16px 0;
+}
+.portal-shell input:not([type="checkbox"]) {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid #817c73;
+  border-radius: 6px;
+}
+.portal-shell button,
+.portal-button {
+  display: inline-block;
+  min-height: 44px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  background: #263e38;
+  color: white;
+  margin: 8px 8px 8px 0;
+  font-weight: 600;
+  text-decoration: none !important;
+}
+.portal-shell button.secondary {
+  background: white;
+  color: #263e38;
+  border: 1px solid #263e38;
+}
+.portal-shell button:disabled {
+  background: #e5e3de;
+  color: #5b5a56;
+  cursor: not-allowed;
+  border-color: #d2cfc7;
+}
+.portal-shell :focus-visible {
+  outline: 3px solid #a76627;
+  outline-offset: 4px;
+}
+.portal-notice {
+  background: #f3eddf;
+  padding: 16px;
+  border-radius: 8px;
+}
+.portal-choice {
+  display: flex !important;
+  gap: 12px;
+  align-items: flex-start;
+}
+.portal-choice input {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.portal-shell ol {
+  padding-left: 24px;
+  list-style: decimal;
+  line-height: 2;
+}
+.document-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.preview-banner {
+  background: #263e38;
+  color: white;
+  text-align: center;
+  padding: 8px;
+  font-size: 14px;
+}
+@media (max-width: 480px) {
+  .portal-shell {
+    padding: 20px 16px 48px;
+  }
+  .portal-card,
+  .portal-document {
+    padding: 20px;
+  }
+  .portal-header {
+    margin-bottom: 24px;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
-
 body {
-  margin: 0;
+  background-color: #faf7f2;
+  color: #221b14;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
-
-.next-migration-note {
-  display: none;
+::selection {
+  background-color: #e6daca;
+  color: #221b14;
+}
+*:focus-visible {
+  outline: 2px solid #9a6b34;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -5rem;
+  z-index: 99;
+  padding: 1rem;
+  background: #fff;
+  color: #221b14;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+.legacy-article {
+  max-width: 960px;
+}
+.legacy-article h1 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.15;
+  margin-bottom: 1.5rem;
+}
+.legacy-article h2,
+.legacy-article h3 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.6rem;
+  margin: 2rem 0 1rem;
+}
+.legacy-article p,
+.legacy-article ul {
+  margin: 1rem 0;
+  line-height: 1.8;
+  color: #6e6155;
+}
+.legacy-article a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legacy-article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  margin: 1rem 0;
+}
+.legacy-article table {
+  max-width: 100%;
+}
+.legacy-article iframe {
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

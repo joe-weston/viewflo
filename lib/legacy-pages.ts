@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const SITE_URL = 'https://www.pasadenashadesandshutters.com';
+const SITE_URL = `${process.env.VIEWFLOW_APP_URL || 'http://localhost:3188'}/pasadena-shades-and-shutters`;
 const MIRROR_ROOT = path.join(process.cwd(), 'content', 'mirror');
 
 const KNOWN_ROUTES = [
@@ -237,6 +237,7 @@ export function listLegacyPages(): LegacyPage[] {
 }
 
 export function getLegacyPage(slug?: string[]): LegacyPage | null {
+  if (slug?.some(segment => segment === '.' || segment === '..' || /[\\/\0]/.test(segment))) return null;
   const routePath = normalizeRoutePath(slug?.join('/') ?? '');
   const filePath = filePathFromRoute(routePath);
 
