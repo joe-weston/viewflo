@@ -6,7 +6,7 @@ export default defineConfig({
   reporter: "list",
   outputDir: "tmp/playwright-results",
   use: {
-    baseURL: "http://127.0.0.1:3188",
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:3188",
     channel: "chrome",
     headless: true,
     reducedMotion: "reduce",

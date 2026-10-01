@@ -1,31 +1,58 @@
-// Verified legacy client content replaces prototype review/count data.
 export const galleryProjects = [
   {
-    id: "motorized-roller-shades-on-madeline-dr-in-pasadena-ca.php",
-    title: "Motorized roller shades",
-    city: "Pasadena",
-    treatment: "Shades",
-    afterImage:
-      "/shutter-projects/images/motorized-roller-shades-madeline-dr-pasadena-ca/motorized-roller-shades-madeline-dr-pasadena-ca-1.jpg",
-    note: "A completed window treatment project on Madeline Drive in Pasadena.",
+    id: "midcentury-living",
+    title: "Mid-century living room",
+    city: "Altadena",
+    treatment: "Custom Sheer Drapery",
+    beforeImage: "/tenants/pasadena/gallery/Image-1-Before.png",
+
+    afterImage: "/tenants/pasadena/gallery/Image-1-After.png",
+
+    note: "A bare corner window wall with no way to soften the afternoon. Linen sheers on a ceiling-mounted track now run the full corner, so the garden still reads through the fabric and the room stops glaring at 4pm.",
   },
   {
-    id: "pinch-pleated-drapes-in-la-canada-flintridge-ca.php",
-    title: "Pinch pleated drapes",
+    id: "hillside-french-doors",
+    title: "Hillside living room",
     city: "La Cañada Flintridge",
-    treatment: "Drapery",
-    afterImage:
-      "/shutter-projects/images/pinch-pleated-drapes-la-canada-flintridge-ca/pinch-pleated-drapes-la-canada-flintridge-ca-1.jpg",
-    note: "Custom drapery from the Pasadena Shades & Shutters project archive.",
+    treatment: "Solar Roller Shades",
+    beforeImage: "/tenants/pasadena/gallery/Image-2-Before.png",
+
+    afterImage: "/tenants/pasadena/gallery/Image-2-After.png",
+
+    note: "Three sets of French doors facing straight down the canyon. Light-filtering roller shades mounted inside each opening cut the heat without blocking the doors — they still open and close all day.",
   },
   {
-    id: "woven-wood-shades-on-toluca-estates-dr-in-toluca-lake-ca.php",
-    title: "Woven wood shades",
-    city: "Toluca Lake",
-    treatment: "Woven wood",
-    afterImage:
-      "/shutter-projects/images/woven-wood-shades-toluca-estates-dr-toluca-lake-ca/woven-wood-shades-toluca-estates-dr-toluca-lake-ca-1.jpg",
-    note: "Woven wood shades on Toluca Estates Drive.",
+    id: "poolside-family-room",
+    title: "Family room off the pool",
+    city: "Arcadia",
+    treatment: "Motorized Roller Shades",
+    beforeImage: "/tenants/pasadena/gallery/Image-3-Before.png",
+
+    afterImage: "/tenants/pasadena/gallery/Image-3-After.png",
+
+    note: "Wide sliders with full sun off the pool deck and a TV nobody could see until evening. Motorized roller shades on a single remote drop the glare and keep the yard visible.",
+  },
+  {
+    id: "shutter-home-office",
+    title: "Home office with a street view",
+    city: "Pasadena",
+    treatment: "Plantation Shutters",
+    beforeImage: "/tenants/pasadena/gallery/Image-4-Before.png",
+
+    afterImage: "/tenants/pasadena/gallery/Image-4-After.png",
+
+    note: "A desk sitting in front of five uncovered windows on a corner. Hardwood shutters tilt to hold the daylight while giving the room privacy from the sidewalk — and they close over the return wall too.",
+  },
+  {
+    id: "blue-bath-woven",
+    title: "Primary bathroom",
+    city: "South Pasadena",
+    treatment: "Woven Wood Shades",
+    beforeImage: "/tenants/pasadena/gallery/Image-5-before.png",
+
+    afterImage: "/tenants/pasadena/gallery/Image-5-After.png",
+
+    note: "Three bare windows right over the tub. Woven wood shades with a privacy liner add the warmth the room was missing and stop the neighbors from being part of the bath.",
   },
 ];
 export const testimonials = [
@@ -102,7 +129,7 @@ export const faqs = [
   {
     question: "Do you offer an in-home consultation?",
     answer:
-      "Yes. Contact Pasadena Shades & Shutters to request a free in-home consultation and discuss availability.",
+      "Yes. Contact Pasadena Shades & Shutters to request a in-home consultation and discuss availability.",
   },
   {
     question: "Which window treatments can I choose?",

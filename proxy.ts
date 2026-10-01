@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { publicRedirect } from "./lib/pasadena-site";
 import {
   shouldRewriteTenantPath,
   tenantForHost,
@@ -7,12 +8,27 @@ import {
 } from "./lib/tenant-routing";
 
 export async function proxy(request: NextRequest) {
+  const destination = publicRedirect(
+    request.headers.get("host"),
+    request.nextUrl.pathname,
+    process.env.VERCEL_ENV === "production",
+  );
+  if (destination) {
+    const target = new URL(destination, request.url);
+    const source = new URL(request.url);
+    source.searchParams.delete("__viewflo_tenant_host");
+    target.search = source.search;
+    return NextResponse.redirect(target, 308);
+  }
   const tenant = tenantForHost(request.headers.get("host"));
   const forwardedHeaders = new Headers(request.headers);
   forwardedHeaders.delete("x-viewflo-tenant-host");
   if (tenant) forwardedHeaders.set("x-viewflo-tenant-host", tenant);
 
-  const rewriteUrl = request.nextUrl.clone();
+  // Preserve the transport origin: NextURL normalizes 127.0.0.1 to localhost,
+  // which can turn a local internal rewrite into a second HTTP request.
+  const rewriteUrl = new URL(request.url);
+  const sanitizeQuery = rewriteUrl.searchParams.has("__viewflo_tenant_host");
   rewriteUrl.searchParams.delete("__viewflo_tenant_host");
   const shouldRewrite =
     tenant !== null && shouldRewriteTenantPath(rewriteUrl.pathname);
@@ -23,7 +39,7 @@ export async function proxy(request: NextRequest) {
   }
 
   const makeResponse = () =>
-    shouldRewrite
+    shouldRewrite || sanitizeQuery
       ? NextResponse.rewrite(rewriteUrl, {
           request: { headers: forwardedHeaders },
         })

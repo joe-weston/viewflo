@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import { TenantLink as Link } from "../TenantLink";
 
 type Variant = "primary" | "secondary" | "ghost";
 type Size = "md" | "lg";
@@ -61,4 +61,3 @@ export function Button(props: ButtonProps | LinkProps) {
     </button>
   );
 }
-

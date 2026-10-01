@@ -13,7 +13,15 @@ function withHost(path: string, host: string) {
     location: string | undefined;
   }>((resolve, reject) => {
     const request = http.get(
-      { hostname: "127.0.0.1", port: 3188, path, headers: { host } },
+      {
+        hostname: "127.0.0.1",
+        port: Number(
+          new URL(process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:3188")
+            .port,
+        ),
+        path,
+        headers: { host },
+      },
       (response) => {
         let body = "";
         response.setEncoding("utf8");
@@ -107,14 +115,20 @@ test("configured manager magic-link journey", async ({ page }, info) => {
   );
 
   const link = new URL(process.env.PLAYWRIGHT_MAGIC_LINK_URL!);
-  expect(link.origin).toBe("http://127.0.0.1:3188");
+  expect(link.origin).toBe(
+    process.env.PLAYWRIGHT_BASE_URL || "http://127.0.0.1:3188",
+  );
   expect(link.pathname.replace(/\/$/, "")).toBe("/auth/callback");
   try {
     await page.goto(link.toString());
-    await page.waitForURL(url => url.pathname.replace(/\/$/, "") === `/${tenant}/admin/billing`);
+    await page.waitForURL(
+      (url) => url.pathname.replace(/\/$/, "") === `/${tenant}/admin/billing`,
+    );
   } catch {
     // Avoid including the bearer link in Playwright's navigation error output.
-    throw new Error("Approved magic-link navigation did not reach tenant billing");
+    throw new Error(
+      "Approved magic-link navigation did not reach tenant billing",
+    );
   }
   await expect(
     page.getByRole("heading", { name: "Billing", exact: true }),

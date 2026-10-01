@@ -11,7 +11,7 @@ export function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="bg-cream">
+    <section id="faq" className="scroll-mt-28 bg-cream">
       <div className="mx-auto grid max-w-content gap-10 px-5 py-16 md:px-6 md:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <SectionHeading
           eyebrow="Questions"
@@ -65,4 +65,3 @@ export function FaqSection() {
     </section>
   );
 }
-

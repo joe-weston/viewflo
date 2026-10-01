@@ -1,6 +1,6 @@
 import React from "react";
 import { ArrowRightIcon, CameraIcon, PhoneIcon } from "lucide-react";
-import Link from "next/link";
+import { TenantLink as Link } from "../TenantLink";
 import { Button } from "../ui/Button";
 
 export function ClosingCta() {
@@ -10,7 +10,7 @@ export function ClosingCta() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
           <div>
             <h2 className="max-w-2xl font-display text-3xl font-semibold leading-[1.15] text-cream md:text-[2.6rem]">
-              Start with a free consultation — or just send us photos and skip
+              Start with a design consultation — or just send us photos and skip
               the appointment.
             </h2>
             <p className="mt-4 max-w-xl leading-relaxed text-cream/70">
@@ -56,4 +56,3 @@ export function ClosingCta() {
     </section>
   );
 }
-

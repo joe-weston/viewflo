@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import { TenantLink as Link } from "../TenantLink";
 import { ClockIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import { services } from "../../data/services";
 import { serviceAreas } from "../../data/content";
@@ -89,7 +89,7 @@ export function SiteFooter() {
               Get started
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-cream/70">
-              Discuss your window treatments with a free in-home consultation.
+              Request details about an in-home design consultation.
             </p>
             <div className="mt-5 flex flex-col gap-3">
               <Link
@@ -114,13 +114,12 @@ export function SiteFooter() {
             Alvarez, owner &amp; design consultant
           </p>
           <nav aria-label="Policies" className="flex gap-5">
-            <Link href="/pasadena-shades-and-shutters/privacy.php">Privacy</Link>
-            <Link href="/pasadena-shades-and-shutters/terms.php">Terms</Link>
-            <Link href="/pasadena-shades-and-shutters/sitemap.php">Sitemap</Link>
+            <Link href="/pasadena-shades-and-shutters/privacy">Privacy</Link>
+            <Link href="/pasadena-shades-and-shutters/terms">Terms</Link>
+            <Link href="https://www.pasadenashadesandshutters.com/sitemap.xml">Sitemap</Link>
           </nav>
         </div>
       </div>
     </footer>
   );
 }
-

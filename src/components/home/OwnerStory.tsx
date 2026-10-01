@@ -18,7 +18,7 @@ const credentials = [
   },
   {
     icon: PaletteIcon,
-    title: "Hundreds of samples in hand",
+    title: "Materials in your own light",
     detail:
       "The in-home shopping experience — fabrics and finishes in your own light.",
   },
@@ -26,7 +26,7 @@ const credentials = [
 
 export function OwnerStory() {
   return (
-    <section className="border-y border-linen bg-sand">
+    <section id="about" className="scroll-mt-28 border-y border-linen bg-sand">
       <div className="mx-auto grid max-w-content items-center gap-10 px-5 py-16 md:px-6 md:py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         <div className="relative">
           <Image
@@ -80,4 +80,3 @@ export function OwnerStory() {
     </section>
   );
 }
-

@@ -1,10 +1,9 @@
 import Image from "next/image";
 import React from "react";
-import Link from "next/link";
+import { TenantLink as Link } from "../components/TenantLink";
 import { ArrowLeftIcon, ArrowUpRightIcon, CheckIcon } from "lucide-react";
 import { getServiceBySlug, services } from "../data/services";
 import { Button } from "../components/ui/Button";
-import { testimonials } from "../data/content";
 
 export function ServiceDetail({ slug }: { slug: string }) {
   const service = slug ? getServiceBySlug(slug) : undefined;
@@ -29,7 +28,6 @@ export function ServiceDetail({ slug }: { slug: string }) {
   }
 
   const others = services.filter((item) => item.slug !== service.slug);
-  const testimonial = testimonials[1];
 
   return (
     <div className="bg-cream">
@@ -116,15 +114,10 @@ export function ServiceDetail({ slug }: { slug: string }) {
               className="w-full rounded-3xl object-cover shadow-card"
             />
 
-            <figure className="mt-5 rounded-2xl border border-linen bg-sand/60 p-5">
-              <blockquote className="text-[0.95rem] leading-relaxed text-ink/85">
-                {testimonial.quote}
-              </blockquote>
-              <figcaption className="mt-3 text-sm text-stone">
-                <span className="font-medium text-ink">{testimonial.name}</span>{" "}
-                · {testimonial.city}
-              </figcaption>
-            </figure>
+            <aside className="mt-5 rounded-2xl border border-linen bg-sand/60 p-5">
+              <p className="text-[0.95rem] leading-relaxed text-ink/85">Every room has different light and privacy needs. Discuss materials, measurements, pricing, and timing with Robin before deciding.</p>
+              <Link href="/pasadena-shades-and-shutters/consultation" className="mt-3 inline-block text-sm text-brass">Request details →</Link>
+            </aside>
           </div>
         </div>
 
@@ -160,4 +153,3 @@ export function ServiceDetail({ slug }: { slug: string }) {
     </div>
   );
 }
-

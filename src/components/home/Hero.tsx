@@ -29,9 +29,8 @@ export function Hero() {
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone">
             Shutters, shades, blinds, drapery, and motorized treatments —
             designed and measured by Robin Alvarez, an interior designer of 25
-            years, then installed by the same professional crew she has worked
-            with for years. Free in-home consultation across the Los Angeles
-            area.
+            years. Explore materials, light control, and finishes for your
+            home. Request details about an in-home consultation.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -46,7 +45,7 @@ export function Hero() {
           </div>
 
           <p className="mt-7 text-sm text-stone">
-            Personal design guidance · Free in-home consultation
+            Personal design guidance · Consultations by arrangement
           </p>
         </motion.div>
 
@@ -80,4 +79,3 @@ export function Hero() {
     </section>
   );
 }
-

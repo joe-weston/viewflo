@@ -50,6 +50,7 @@ export default async function AdminLayout({
         tenantPrefix={location.customDomain ? `/${tenant}` : ""}
         items={[
           { label: "Overview", href: tenantPath(location, "/admin") },
+          { label: "Inquiries", href: tenantPath(location, "/admin/leads") },
           { label: "Billing", href: tenantPath(location, "/admin/billing") },
           { label: "Website", href: tenantPath(location) },
         ]}

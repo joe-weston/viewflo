@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Link from "next/link";
+import { TenantLink as Link } from "../TenantLink";
 import { MenuIcon, PhoneIcon, XIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 
@@ -132,4 +132,3 @@ export function SiteHeader() {
     </header>
   );
 }
-

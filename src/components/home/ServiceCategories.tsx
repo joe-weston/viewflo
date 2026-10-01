@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import Link from "next/link";
+import { TenantLink as Link } from "../TenantLink";
 import { ArrowUpRightIcon } from "lucide-react";
 import { services } from "../../data/services";
 import { SectionHeading } from "../ui/SectionHeading";
@@ -107,4 +107,3 @@ export function ServiceCategories() {
     </section>
   );
 }
-
