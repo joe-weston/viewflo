@@ -1,11 +1,5 @@
-import type { MetadataRoute } from 'next';
-import { listLegacyPages, routeToUrl } from '../lib/legacy-pages';
-
+import type { MetadataRoute } from "next";
+import { publicRoutes, PASADENA_ORIGIN } from "../lib/pasadena-site";
 export default function sitemap(): MetadataRoute.Sitemap {
-  return listLegacyPages().map((page) => ({
-    url: routeToUrl(page.routePath),
-    lastModified: new Date(),
-    changeFrequency: page.routePath === '' ? 'weekly' : 'monthly',
-    priority: page.routePath === '' ? 1 : 0.7,
-  }));
+ return publicRoutes.map(route=>({url:PASADENA_ORIGIN+(route?"/"+route+"/":"/"),changeFrequency:"monthly",priority:route?0.7:1}));
 }

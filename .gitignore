@@ -1,4 +1,5 @@
 node_modules/
+.npm-cache/
 .next/
 out/
 dist/
@@ -18,3 +19,4 @@ pnpm-debug.log*
 Thumbs.db
 
 tmp/
+*.tsbuildinfo
