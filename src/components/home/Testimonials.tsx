@@ -1,5 +1,5 @@
 import { QuoteIcon, StarIcon } from "lucide-react";
-import { customerReviews } from "../../data/customer-reviews";
+import { customerReviews, reviewProfiles } from "../../data/customer-reviews";
 import { SectionHeading } from "../ui/SectionHeading";
 
 function ReviewAttribution({
@@ -50,7 +50,33 @@ export function Testimonials() {
           eyebrow="In their words"
           title="What our customers say"
         />
-        <div className="mt-10 grid gap-5 lg:grid-cols-[1.25fr_1fr]">
+        <nav
+          aria-label="Business review profiles"
+          className="mt-6 flex flex-wrap gap-3"
+        >
+          {reviewProfiles.map((profile) => (
+            <a
+              key={profile.name}
+              href={profile.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${profile.name} Reviews: ${profile.rating} out of 5 from ${profile.count} reviews (opens in a new tab)`}
+              className="inline-flex min-h-12 items-center gap-2 rounded-full border border-linen bg-white px-4 py-3 text-sm text-ink transition-colors hover:border-brass hover:bg-sand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brass"
+            >
+              <span className="font-medium">{profile.name} Reviews</span>
+              <StarIcon
+                className="h-3.5 w-3.5 shrink-0 fill-brass text-brass"
+                aria-hidden="true"
+              />
+              <span className="font-semibold">{profile.rating}</span>
+              <span className="text-stone">({profile.count})</span>
+              <span className="text-brass" aria-hidden="true">
+                ↗
+              </span>
+            </a>
+          ))}
+        </nav>
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1.25fr_1fr]">
           <figure className="flex flex-col rounded-3xl border border-linen bg-white p-7 shadow-card md:p-9">
             <QuoteIcon className="h-7 w-7 text-brass/40" aria-hidden="true" />
             <blockquote

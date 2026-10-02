@@ -1,5 +1,20 @@
 // Selected verbatim excerpts verified on Google Maps on October 2, 2026.
 // Source ages record that verification; these are not a live review feed.
+export const reviewProfiles = [
+  {
+    name: "Google",
+    rating: "5.0",
+    count: 27,
+    href: "https://www.google.com/maps?cid=10720248438238584178",
+  },
+  {
+    name: "Yelp",
+    rating: "5.0",
+    count: 11,
+    href: "https://www.yelp.com/biz/pasadena-shades-and-shutters-montrose",
+  },
+] as const;
+
 export const customerReviews = [
   {
     name: "Eileen Christensen",
