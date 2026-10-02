@@ -30,9 +30,10 @@ export function OwnerStory() {
       <div className="mx-auto grid max-w-content items-center gap-10 px-5 py-16 md:px-6 md:py-24 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         <div className="relative">
           <Image
-            width={1200}
-            height={900}
-            src="/RA-1516855996507.jpg"
+            width={800}
+            height={1000}
+            src="/tenants/pasadena/robin-alvarez-portrait.webp"
+            sizes="(min-width: 1024px) 480px, (min-width: 768px) calc(100vw - 48px), calc(100vw - 40px)"
             alt="Robin Alvarez, owner and in-home design consultant at Pasadena Shades & Shutters"
             className="aspect-[4/5] w-full rounded-3xl object-cover object-top shadow-card"
           />
