@@ -23,8 +23,7 @@ export function PhotoIntake() {
             <h2 className="font-display text-xl">What happens next</h2>
             <p className="mt-3 leading-relaxed text-stone">
               Your photos are stored privately for project review. We will send
-              a confirmation email and contact you about options. Final pricing
-              may require measurements and product selections.
+              a confirmation email and contact you about options and next steps.
             </p>
             <p className="mt-4 text-stone">
               Prefer to talk?{" "}

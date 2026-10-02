@@ -7,8 +7,15 @@ import {
   Preview,
   Text,
 } from "@react-email/components";
+import { deliveryRecipient, type LeadEnvironment } from "./lead-environment";
 import type { LeadDetails, LeadKind } from "./lead-fields";
+export const pasadenaDefaultSender = {
+  name: "Pasadena Shades & Shutters",
+  email: "notifications@pasadenashadesandshutters.com",
+};
 export type EmailPayload = {
+  environment?: LeadEnvironment;
+  adminUrl?: string;
   reference: string;
   kind: LeadKind;
   name: string;
@@ -49,14 +56,23 @@ export function emailContent(job: EmailJob) {
           `City: ${p.details.city || "Not provided"}`,
           `Windows: ${p.details.windowCount || "Not provided"}`,
           `Timeline: ${p.details.timeline || "Not provided"}`,
-          `Budget: ${p.details.budget || "Not provided"}`,
           `Notes: ${p.notes || "None"}`,
           `Photos: ${p.photoCount} (stored privately for authorized project review)`,
-          `Source: ${p.sourcePath}`,
+          ...(p.adminUrl
+            ? [`View submission (sign-in required): ${p.adminUrl}`]
+            : []),
         ]
       : [
           `Thank you, ${p.name}. ${p.senderName} received your ${kind}.`,
-          "We will review your request and contact you about next steps. Your request is not a confirmed appointment or final quote.",
+          "We will review your request and contact you about next steps. Your request is not a confirmed appointment.",
+          `Email: ${p.email}`,
+          `Phone: ${p.phone || "Not provided"}`,
+          `Project: ${p.details.projectTypes.join(", ") || "Not provided"}`,
+          `City: ${p.details.city || "Not provided"}`,
+          `Windows: ${p.details.windowCount || "Not provided"}`,
+          `Timeline: ${p.details.timeline || "Not provided"}`,
+          `Notes: ${p.notes || "None"}`,
+          `Photos: ${p.photoCount}`,
           "Questions? Call 818-618-5288.",
         ];
   lines.push(`Received: ${p.receivedAt}`, `Reference: ${p.reference}`);
@@ -83,10 +99,15 @@ export function emailContent(job: EmailJob) {
     </Html>
   );
   return {
-    from: `${p.senderName} <${p.senderEmail}>`,
-    to: job.recipient,
+    from: `${p.senderName || pasadenaDefaultSender.name} <${p.senderEmail || pasadenaDefaultSender.email}>`,
+    to: p.environment
+      ? deliveryRecipient(p.environment, job.recipient)
+      : job.recipient,
     replyTo: job.audience === "manager" ? p.email : p.replyTo,
-    subject,
+    subject:
+      p.environment === "staging"
+        ? `[STAGING ${job.audience} ${p.reference}] ${subject}`
+        : subject,
     text: lines.join("\n\n"),
     react,
   };

@@ -65,6 +65,7 @@ export async function generateMetadata({
     },
   };
 }
+import { PasadenaAnalytics } from "../../../src/components/PasadenaAnalytics";
 export default async function Page({ params, searchParams }: Props) {
   const { tenant, slug } = await params;
   if (tenant !== PASADENA_TENANT) notFound();
@@ -77,7 +78,11 @@ export default async function Page({ params, searchParams }: Props) {
       ? ""
       : "/" + tenant;
   if (route && legacyRedirects[route])
-    permanentRedirect(prefix + legacyRedirects[route]);
+    permanentRedirect(
+      legacyRedirects[route] === "/sitemap.xml"
+        ? "/sitemap.xml"
+        : prefix + legacyRedirects[route],
+    );
   if (route === "send-photos") permanentRedirect(prefix + "/photo-intake/");
   if (!publicRoutes.includes(route as (typeof publicRoutes)[number]))
     notFound();
@@ -115,6 +120,12 @@ export default async function Page({ params, searchParams }: Props) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
         }}
+      />
+      <PasadenaAnalytics
+        enabled={
+          process.env.VERCEL_ENV === "production" &&
+          process.env.PASADENA_ANALYTICS_ENABLED === "true"
+        }
       />
       <SiteHeader />
       {content}

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { faqs } from "../../data/content";
@@ -9,6 +9,14 @@ const easing = [0.23, 1, 0.32, 1] as const;
 
 export function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  useEffect(() => {
+    const openChoosing = () => {
+      if (window.location.hash === "#choosing-treatments") setOpenIndex(2);
+    };
+    openChoosing();
+    window.addEventListener("hashchange", openChoosing);
+    return () => window.removeEventListener("hashchange", openChoosing);
+  }, []);
 
   return (
     <section id="faq" className="scroll-mt-28 bg-cream">
@@ -22,7 +30,11 @@ export function FaqSection() {
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={faq.question} className="border-b border-linen">
+              <div
+                key={faq.question}
+                id={index === 2 ? "choosing-treatments" : undefined}
+                className="scroll-mt-28 border-b border-linen"
+              >
                 <h3>
                   <button
                     type="button"

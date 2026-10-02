@@ -1,4 +1,6 @@
 import "server-only";
+import { resolveOwnerRecipients } from "./lead-recipients";
+import { leadEnvironment } from "./lead-environment";
 import { createClient } from "@supabase/supabase-js";
 import { LeadResend, sendLeadEmail } from "./lead-resend";
 import { createHash, timingSafeEqual } from "node:crypto";
@@ -20,6 +22,8 @@ function database() {
 export function leadReady() {
   return (
     process.env.LEAD_INTAKE_ENABLED === "true" &&
+    process.env.LEAD_SCOPED_SCHEMA_READY === "true" &&
+    !!leadEnvironment() &&
     !!(
       (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
       process.env.SUPABASE_SERVICE_ROLE_KEY &&
@@ -30,10 +34,14 @@ export function leadReady() {
   );
 }
 export function emailDeliveryReady() {
-  return !!(
-    (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
-    process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    process.env.RESEND_API_KEY
+  return (
+    process.env.LEAD_SCOPED_SCHEMA_READY === "true" &&
+    !!leadEnvironment() &&
+    !!(
+      (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+      process.env.SUPABASE_SERVICE_ROLE_KEY &&
+      process.env.RESEND_API_KEY
+    )
   );
 }
 export async function verifyLead(token: string, hostname: string) {
@@ -66,6 +74,9 @@ export async function verifyLead(token: string, hostname: string) {
   }
 }
 export async function saveLead(lead: SavedLead) {
+  const environment = leadEnvironment();
+  if (!environment || process.env.LEAD_SCOPED_SCHEMA_READY !== "true")
+    throw new Error("Scoped intake unavailable");
   const db = database();
   const { data: tenant, error: tenantError } = await db
     .from("vf_tenants")
@@ -73,15 +84,51 @@ export async function saveLead(lead: SavedLead) {
     .eq("slug", lead.tenantSlug)
     .single();
   if (tenantError || !tenant) throw new Error("Tenant unavailable");
+  const recipients = await resolveOwnerRecipients(
+    async () => {
+      const { data, error } = await db
+        .from("vf_memberships")
+        .select("user_id,role")
+        .eq("tenant_id", tenant.id)
+        .eq("role", "owner");
+      if (error) throw new Error("Membership unavailable");
+      return data || [];
+    },
+    async (id) => {
+      const { data, error } = await db.auth.admin.getUserById(id);
+      if (error) throw new Error("Owner identity unavailable");
+      return data.user;
+    },
+  );
+  const origin = process.env.LEAD_PUBLIC_ORIGIN;
+  if (!origin) throw new Error("Admin origin unavailable");
+  const adminOrigin = new URL(origin);
+  if (
+    adminOrigin.protocol !== "https:" ||
+    adminOrigin.username ||
+    adminOrigin.password ||
+    adminOrigin.pathname !== "/" ||
+    adminOrigin.search ||
+    adminOrigin.hash ||
+    !process.env.LEAD_INTAKE_HOSTNAMES?.split(",")
+      .map((h) => h.trim())
+      .includes(adminOrigin.hostname)
+  )
+    throw new Error("Admin origin unavailable");
+  const adminUrl = new URL(
+    `/pasadena-shades-and-shutters/admin/leads/${lead.id}/`,
+    adminOrigin,
+  ).href;
   const { data: existing, error: readError } = await db
     .from("vf_leads")
-    .select("tenant_id,fingerprint")
+    .select("tenant_id,fingerprint,environment")
     .eq("id", lead.id)
     .maybeSingle();
   if (readError) throw new Error("Intake unavailable");
   if (existing) {
     if (
       existing.tenant_id !== tenant.id ||
+      existing.environment !== environment ||
       existing.fingerprint !== lead.fingerprint
     )
       throw new Error("Identity conflict");
@@ -115,7 +162,11 @@ export async function saveLead(lead: SavedLead) {
   const { images: _images, tenantSlug: _slug, ...input } = lead;
   void _images;
   void _slug;
-  const { error } = await db.rpc("vf_create_lead", {
+  const { error } = await db.rpc("vf_create_lead_scoped", {
+    p_environment: environment,
+    p_manager_recipients: recipients,
+    p_reply_to: recipients[0],
+    p_admin_url: adminUrl,
     p_slug: lead.tenantSlug,
     p_lead: input,
     p_photos: photos,
@@ -123,12 +174,13 @@ export async function saveLead(lead: SavedLead) {
   if (error) {
     const { data: saved } = await db
       .from("vf_leads")
-      .select("fingerprint,tenant_id")
+      .select("fingerprint,tenant_id,environment")
       .eq("id", lead.id)
       .maybeSingle();
     if (
       saved?.fingerprint === lead.fingerprint &&
-      saved.tenant_id === tenant.id
+      saved.tenant_id === tenant.id &&
+      saved.environment === environment
     )
       return;
     // Preserve uncertain uploads for reconciliation; never delete objects concurrently referenced by a committed lead.
@@ -138,9 +190,14 @@ export async function saveLead(lead: SavedLead) {
 export async function deliverLeadEmails(
   leadId: string | null = null,
 ): Promise<"sent" | "queued"> {
+  // Disable the old unscoped claim path until an inventoried environment-scoped migration is installed.
+  const environment = leadEnvironment();
+  if (process.env.LEAD_SCOPED_SCHEMA_READY !== "true" || !environment)
+    return "queued";
   if (!process.env.RESEND_API_KEY) return "queued";
   const db = database();
-  const { data, error } = await db.rpc("vf_claim_lead_email", {
+  const { data, error } = await db.rpc("vf_claim_lead_email_scoped", {
+    p_environment: environment,
     p_lead: leadId,
     p_limit: 6,
   });
@@ -148,14 +205,22 @@ export async function deliverLeadEmails(
   const resend = new LeadResend(process.env.RESEND_API_KEY);
   await processEmailJobs(
     (data || []) as EmailJob[],
-    (job) => sendLeadEmail(resend, job),
+    (job) => {
+      if (job.payload.environment !== environment)
+        throw new Error("Environment mismatch");
+      return sendLeadEmail(resend, job);
+    },
     async (job, id, category) => {
-      const { error: finishError } = await db.rpc("vf_finish_lead_email", {
-        p_id: job.id,
-        p_claim: job.claim_token,
-        p_resend_id: id,
-        p_error: category,
-      });
+      const { error: finishError } = await db.rpc(
+        "vf_finish_lead_email_scoped",
+        {
+          p_environment: environment,
+          p_id: job.id,
+          p_claim: job.claim_token,
+          p_resend_id: id,
+          p_error: category,
+        },
+      );
       if (finishError) throw new Error("Delivery reconciliation required");
       if (!id)
         console.warn("lead_email_retry", { reference: job.lead_id, category });
@@ -166,6 +231,7 @@ export async function deliverLeadEmails(
     .from("vf_lead_email_outbox")
     .select("status")
     .eq("lead_id", leadId)
+    .eq("environment", environment)
     .eq("audience", "submitter");
   return !statusError &&
     statuses?.length &&

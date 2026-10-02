@@ -60,14 +60,6 @@ export function ServiceDetail({ slug }: { slug: string }) {
             <dl className="mt-8 grid grid-cols-2 gap-6 border-y border-linen py-6 sm:grid-cols-3">
               <div>
                 <dt className="text-xs uppercase tracking-[0.14em] text-stone/70">
-                  Your quote
-                </dt>
-                <dd className="mt-1 font-display text-lg font-semibold text-ink">
-                  {service.startingAt}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs uppercase tracking-[0.14em] text-stone/70">
                   Lead time
                 </dt>
                 <dd className="mt-1 font-display text-lg font-semibold text-ink">
@@ -129,8 +121,7 @@ export function ServiceDetail({ slug }: { slug: string }) {
             <aside className="mt-5 rounded-2xl border border-linen bg-sand/60 p-5">
               <p className="text-[0.95rem] leading-relaxed text-ink/85">
                 Every room has different light and privacy needs. Discuss
-                materials, measurements, pricing, and timing with Robin before
-                deciding.
+                materials, measurements, and timing with Robin before deciding.
               </p>
               <Link
                 href="/pasadena-shades-and-shutters/consultation"
@@ -142,6 +133,48 @@ export function ServiceDetail({ slug }: { slug: string }) {
           </div>
         </div>
 
+        <section aria-label="Product options" className="mt-12 space-y-8">
+          {(slug === "blinds"
+            ? [
+                {
+                  id: "wood-blinds",
+                  title: "Wood blinds",
+                  text: "Natural wood blinds bring warmth and adjustable light control to a room.",
+                },
+                {
+                  id: "faux-wood-blinds",
+                  title: "Faux wood blinds",
+                  text: "Faux wood blinds offer a wood-like appearance and moisture resistance for kitchens and bathrooms.",
+                },
+              ]
+            : slug === "shutters"
+              ? [
+                  {
+                    id: "polycore-shutters",
+                    title: "Polycore shutters",
+                    text: "Polycore shutters combine a durable synthetic construction with adjustable louvers for privacy and light control.",
+                  },
+                ]
+              : slug === "shades"
+                ? [
+                    {
+                      id: "woven-wood-shades",
+                      title: "Woven wood shades",
+                      text: "Woven wood shades use natural woven materials for texture and softly filtered light. Discuss lining options for privacy.",
+                    },
+                  ]
+                : []
+          ).map((option) => (
+            <article
+              key={option.id}
+              id={option.id}
+              className="scroll-mt-28 rounded-2xl border border-linen p-6"
+            >
+              <h2 className="font-display text-2xl">{option.title}</h2>
+              <p className="mt-3 text-stone">{option.text}</p>
+            </article>
+          ))}
+        </section>
         <section className="mt-16 border-t border-linen pt-10">
           <h2 className="font-display text-2xl font-semibold text-ink">
             Often paired with

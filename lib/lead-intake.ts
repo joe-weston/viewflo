@@ -105,6 +105,7 @@ export async function handleLeadIntake(
     };
     const issue = validateLead(input);
     if (issue) return json(400, { error: issue });
+    delete input.details.budget; // Accept legacy payloads without retaining new budget answers.
     if (
       (input.kind === "consultation") !==
       context.sourcePath.endsWith("/consultation")

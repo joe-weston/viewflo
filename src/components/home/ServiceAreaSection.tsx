@@ -35,7 +35,8 @@ export function ServiceAreaSection() {
             {serviceAreas.map((area) => (
               <li
                 key={area.city}
-                className="rounded-2xl border border-linen bg-cream p-5"
+                id={area.id}
+                className="scroll-mt-28 rounded-2xl border border-linen bg-cream p-5"
               >
                 <div className="flex items-start gap-3">
                   <MapPinIcon
@@ -60,4 +61,3 @@ export function ServiceAreaSection() {
     </section>
   );
 }
-

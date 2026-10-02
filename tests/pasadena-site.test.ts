@@ -43,7 +43,7 @@ test("apex, platform and prefixed custom URLs consolidate in one hop", () => {
       "pasadenashadesandshutters.com",
       "/faux-wood-blinds-pasadena.php",
     ),
-    PASADENA_ORIGIN + "/services/blinds/",
+    PASADENA_ORIGIN + "/services/blinds/#faux-wood-blinds",
   );
   assert.equal(
     publicRedirect(
@@ -51,7 +51,7 @@ test("apex, platform and prefixed custom URLs consolidate in one hop", () => {
       tenant + "/ca-shutters/arcadia-shutters.php",
       true,
     ),
-    PASADENA_ORIGIN + "/#service-area",
+    PASADENA_ORIGIN + "/#arcadia",
   );
   assert.equal(
     publicRedirect("www.pasadenashadesandshutters.com", tenant + "/gallery/"),

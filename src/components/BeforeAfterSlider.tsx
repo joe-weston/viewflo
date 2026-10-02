@@ -68,6 +68,7 @@ export function BeforeAfterSlider({
     >
       <Image
         src={afterImage}
+        loading="eager"
         alt={`${label} after installation`}
         fill
         sizes="(max-width: 1023px) 100vw, 740px"
@@ -80,6 +81,7 @@ export function BeforeAfterSlider({
       >
         <Image
           src={beforeImage}
+          loading="eager"
           alt={`${label} before installation`}
           fill
           sizes="(max-width: 1023px) 100vw, 740px"

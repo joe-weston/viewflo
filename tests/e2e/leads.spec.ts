@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
-const evidence = path.resolve("tmp/ui-verification/resend-lead-intake");
+const evidence = path.resolve(
+  "tmp/ui-verification/pasadena-staging-corrections",
+);
 const prefix = "/pasadena-shades-and-shutters";
 test.beforeAll(() => fs.mkdirSync(evidence, { recursive: true }));
 test("legacy photo URL redirects once to the canonical form", async ({
@@ -60,7 +62,6 @@ test("consultation validates all steps, preserves answers, and shows queued rece
     page.getByRole("heading", { name: "The details", exact: true }),
   ).toBeFocused();
   await page.getByRole("radio", { name: "Pasadena", exact: true }).check();
-  await page.getByRole("radio", { name: "Not sure yet", exact: true }).check();
   await page.screenshot({
     path: `${evidence}/${info.project.name}-consultation-details.png`,
     fullPage: true,
@@ -141,7 +142,7 @@ test("photo intake requires email, supports remove and retry with the same ident
     fullPage: true,
   });
   const submit = page.getByRole("button", {
-    name: "Send photos to request a quote",
+    name: "Send photos",
   });
   await submit.click();
   await expect(page.locator("form").getByRole("alert")).toContainText(

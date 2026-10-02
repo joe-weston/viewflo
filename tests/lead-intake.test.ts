@@ -85,6 +85,7 @@ test("both lead types save before delivery; photos are normalized with metadata 
       emailStatus: "sent",
     });
     assert.ok(saved);
+    assert.equal(saved.details.budget, undefined);
     if (kind === "photo_intake") {
       const meta = await sharp(saved.images[0]).metadata();
       assert.equal(meta.format, "jpeg");

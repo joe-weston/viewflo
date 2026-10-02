@@ -1,4 +1,5 @@
 import React from "react";
+import { googleReviewAction } from "../../data/review-snapshot";
 import { TenantLink as Link } from "../TenantLink";
 import { ClockIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 import { services } from "../../data/services";
@@ -113,6 +114,14 @@ export function SiteFooter() {
             © {new Date().getFullYear()} Pasadena Shades &amp; Shutters · Robin
             Alvarez, owner &amp; design consultant
           </p>
+          <a
+            href={googleReviewAction}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-11 items-center underline"
+          >
+            Write a Google review ↗
+          </a>
           <nav aria-label="Policies" className="flex gap-5">
             <Link href="/pasadena-shades-and-shutters/privacy">Privacy</Link>
             <Link href="/pasadena-shades-and-shutters/terms">Terms</Link>

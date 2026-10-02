@@ -43,17 +43,23 @@ async function capture(page: import("@playwright/test").Page, name: string) {
     .evaluateAll((images) =>
       images.forEach((i) => i.setAttribute("loading", "eager")),
     );
+  // Exercise the actual scroll path so Chromium resolves lazy srcsets inside clipped comparisons.
+  for (const article of await page.locator("article").all())
+    await article.scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollTo(0, 0));
   await expect
-    .poll(() =>
-      page
-        .locator("img")
-        .evaluateAll((images) =>
-          images.every(
-            (i) =>
-              (i as HTMLImageElement).complete &&
-              (i as HTMLImageElement).naturalWidth > 0,
+    .poll(
+      () =>
+        page
+          .locator("img")
+          .evaluateAll((images) =>
+            images.every(
+              (i) =>
+                (i as HTMLImageElement).complete &&
+                (i as HTMLImageElement).naturalWidth > 0,
+            ),
           ),
-        ),
+      { timeout: 15000 },
     )
     .toBe(true);
   expect(
@@ -98,10 +104,14 @@ test("public design, responsive navigation, gallery filter and factual copy", as
       .click();
   } else await page.goto(tenant + "/gallery/");
   await expect(page.locator("h1")).toContainText("Before and after");
-  await expect(page.locator("article")).toHaveCount(5);
+  await expect(
+    page.locator("article").filter({ has: page.getByRole("slider") }),
+  ).toHaveCount(5);
   await capture(page, info.project.name + "-gallery");
   await page.getByRole("button", { name: "Arcadia", exact: true }).click();
-  await expect(page.locator("article")).toHaveCount(1);
+  await expect(
+    page.locator("article").filter({ has: page.getByRole("slider") }),
+  ).toHaveCount(1);
   await capture(page, info.project.name + "-gallery-filter");
   expect(errors).toEqual([]);
 });

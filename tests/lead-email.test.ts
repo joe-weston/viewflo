@@ -83,7 +83,32 @@ test("confirmation uses tenant reply-to and neutral next steps", () => {
   });
   assert.equal(content.replyTo, "office@example.invalid");
   assert.ok(content.text.includes("not a confirmed appointment"));
-  assert.ok(!content.text.includes("Synthetic only"));
+  assert.ok(content.text.includes("Synthetic only"));
+  assert.ok(!content.text.includes("Budget:"));
+});
+test("both staging audiences route exclusively to the shared mailbox and identify the run", () => {
+  for (const audience of ["submitter", "manager"] as const) {
+    const content = emailContent({
+      ...job,
+      audience,
+      recipient: "robinaalvarez@gmail.com",
+      payload: {
+        ...job.payload,
+        environment: "staging",
+        adminUrl:
+          "https://stage.example.invalid/pasadena-shades-and-shutters/admin/leads/lead/",
+      },
+    });
+    assert.equal(content.to, "jocduplbot@gmail.com");
+    assert.ok(content.subject.includes(`[STAGING ${audience} lead]`));
+    assert.ok(!content.text.includes("Budget:"));
+    if (audience === "manager")
+      assert.ok(
+        content.text.includes(
+          "https://stage.example.invalid/pasadena-shades-and-shutters/admin/leads/lead/",
+        ),
+      );
+  }
 });
 test("one recipient failure does not block another and provider details are sanitized", async () => {
   const outcomes: [string, string | null, string | null][] = [];

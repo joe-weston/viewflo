@@ -31,21 +31,14 @@ export const cities = [
   "Arcadia",
   "Somewhere nearby",
 ];
-export const budgets = [
-  "Under $1,500",
-  "$1,500 – $4,000",
-  "$4,000 – $8,000",
-  "$8,000 – $15,000",
-  "$15,000+",
-  "Not sure yet",
-];
 export type LeadKind = "consultation" | "photo_intake";
 export type LeadDetails = {
   projectTypes: string[];
   windowCount: string;
   timeline: string;
   city: string;
-  budget: string;
+  /** Accepted only for compatibility with older clients; never requested or displayed. */
+  budget?: string;
 };
 export type LeadInput = {
   id: string;
@@ -111,12 +104,11 @@ export function validateLead(input: LeadInput) {
     [d.windowCount, windowCounts],
     [d.timeline, timelines],
     [d.city, cities],
-    [d.budget, budgets],
   ] as const) {
     if (typeof value !== "string" || (value && !options.includes(value)))
       return "Choose valid project details.";
     if (!value && input.kind === "consultation")
-      return "Complete your project, city, budget, windows, and timeline.";
+      return "Complete your project, city, windows, and timeline.";
   }
   if (input.kind === "consultation" && !d.projectTypes.length)
     return "Choose at least one project type.";

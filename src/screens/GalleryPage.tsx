@@ -1,6 +1,8 @@
 "use client";
+import Image from "next/image";
 import { BeforeAfterSlider } from "../components/BeforeAfterSlider";
 import React, { useState } from "react";
+import { archivedProjects } from "../data/archived-projects";
 import { galleryProjects } from "../data/content";
 
 import { Button } from "../components/ui/Button";
@@ -21,7 +23,7 @@ export function GalleryPage() {
   return (
     <div className="bg-cream">
       <div className="mx-auto max-w-content px-5 py-12 md:px-6 md:py-16">
-        <div className="max-w-2xl">
+        <div id="before_and_after" className="scroll-mt-28 max-w-2xl">
           <p className="text-[0.72rem] uppercase tracking-[0.2em] text-brass">
             Project gallery
           </p>
@@ -102,6 +104,30 @@ export function GalleryPage() {
           </div>
         )}
 
+        <section
+          className="mt-16 space-y-6"
+          aria-label="Original local projects"
+        >
+          <h2 className="font-display text-3xl">Original local projects</h2>
+          {archivedProjects.map((project) => (
+            <article
+              id={project.id}
+              key={project.id}
+              className="scroll-mt-28 rounded-2xl border border-linen bg-white p-6"
+            >
+              <Image
+                width={900}
+                height={600}
+                src={project.image}
+                alt={project.title}
+                className="mb-5 max-h-80 w-full rounded-xl object-cover"
+              />
+              <h3 className="font-display text-2xl">{project.title}</h3>
+              <p className="mt-2 text-sm text-brass">{project.city}</p>
+              <p className="mt-3 text-stone">{project.summary}</p>
+            </article>
+          ))}
+        </section>
         <div className="mt-16 flex flex-col items-start gap-4 rounded-3xl border border-linen bg-sand/70 p-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-display text-2xl font-semibold text-ink">

@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
+import { trackPasadena } from "../PasadenaAnalytics";
 import Link from "next/link";
 import { CameraIcon, CheckIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 import {
-  budgets,
   cities,
   projectTypes,
   timelines,
@@ -32,7 +32,6 @@ const emptyDetails: LeadDetails = {
   windowCount: "",
   timeline: "",
   city: "",
-  budget: "",
 };
 const inputClass =
   "mt-2 w-full min-w-0 rounded-xl border border-linen bg-white p-3 text-ink focus-visible:outline-brass";
@@ -185,8 +184,8 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
       setError("Choose a project type, window count, and timeline.");
       return;
     }
-    if (step === 1 && (!details.city || !details.budget)) {
-      setError("Choose your city and budget range.");
+    if (step === 1 && !details.city) {
+      setError("Choose your city.");
       return;
     }
     setError("");
@@ -290,6 +289,9 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
           reference: response.reference,
           emailStatus: response.emailStatus === "sent" ? "sent" : "queued",
         });
+        trackPasadena(
+          consultation ? "consultation_submitted" : "photo_submitted",
+        );
         setStatus("received");
         replacePhotos([]);
       } else
@@ -428,13 +430,6 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
         onChange={(v) => setDetail("city", v)}
         required={consultation}
       />
-      <Choices
-        title="Budget range"
-        value={details.budget}
-        values={budgets}
-        onChange={(v) => setDetail("budget", v)}
-        required={consultation}
-      />
       {consultation && photoFields}
       <label className="block font-medium" htmlFor="lead-notes">
         Anything else we should know?{" "}
@@ -539,7 +534,7 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
         </h2>
         <p className="mt-4 leading-relaxed text-stone">
           Thank you. We will review your request and contact you about next
-          steps. This is not a confirmed appointment or final price.
+          steps. This is not a confirmed appointment.
         </p>
         <p className="mt-4 text-stone">
           {receipt.emailStatus === "sent"
@@ -614,9 +609,7 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
                   <p>
                     {details.windowCount} · {details.city}
                   </p>
-                  <p>
-                    {details.timeline} · {details.budget}
-                  </p>
+                  <p>{details.timeline}</p>
                   <p>{photos.length} photos attached</p>
                 </div>
               </>
@@ -669,7 +662,7 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
                 ? "Continue"
                 : consultation
                   ? "Request my consultation"
-                  : "Send photos to request a quote"}
+                  : "Send photos"}
           </Button>
         </div>
       </fieldset>

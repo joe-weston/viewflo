@@ -74,16 +74,109 @@ export const testimonials = [
   },
 ];
 export const serviceAreas = [
-  "Pasadena",
-  "South Pasadena",
-  "Glendale",
-  "La Cañada Flintridge",
-  "Montrose",
-  "Toluca Lake",
-].map((city) => ({
-  city,
-  detail: "Contact us about your window treatment project.",
-}));
+  {
+    id: "la-canada",
+    city: "La Cañada Flintridge",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your La Cañada Flintridge home.",
+  },
+  {
+    id: "pasadena",
+    city: "Pasadena",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Pasadena home.",
+  },
+  {
+    id: "la-crescenta",
+    city: "La Crescenta",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your La Crescenta home.",
+  },
+  {
+    id: "montrose",
+    city: "Montrose",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Montrose home.",
+  },
+  {
+    id: "burbank",
+    city: "Burbank",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Burbank home.",
+  },
+  {
+    id: "toluca-lake",
+    city: "Toluca Lake",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Toluca Lake home.",
+  },
+  {
+    id: "south-pasadena",
+    city: "South Pasadena",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your South Pasadena home.",
+  },
+  {
+    id: "arcadia",
+    city: "Arcadia",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Arcadia home.",
+  },
+  {
+    id: "san-marino",
+    city: "San Marino",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your San Marino home.",
+  },
+  {
+    id: "glendale",
+    city: "Glendale",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Glendale home.",
+  },
+  {
+    id: "los-angeles",
+    city: "Los Angeles",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Los Angeles home.",
+  },
+  {
+    id: "sunland",
+    city: "Sunland",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Sunland home.",
+  },
+  {
+    id: "sun-valley",
+    city: "Sun Valley",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Sun Valley home.",
+  },
+  {
+    id: "echo-park",
+    city: "Echo Park",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Echo Park home.",
+  },
+  {
+    id: "silverlake",
+    city: "Silverlake",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Silverlake home.",
+  },
+  {
+    id: "altadena",
+    city: "Altadena",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Altadena home.",
+  },
+  {
+    id: "monrovia",
+    city: "Monrovia",
+    detail:
+      "Contact Robin about shutters, shades, blinds or drapery for your Monrovia home.",
+  },
+];
 export const trustSignals = [
   { value: "Personal", label: "In-home design guidance" },
   { value: "Custom", label: "Treatments for your windows" },
@@ -107,9 +200,9 @@ export const processSteps = [
   },
   {
     number: "03",
-    title: "Review your quote",
+    title: "Review your selections",
     description:
-      "Confirm your measurements, product selections, pricing, and expected timing before placing an order.",
+      "Confirm your measurements, product selections and expected timing before placing an order.",
     duration: "Before you decide",
   },
   {
@@ -124,12 +217,12 @@ export const faqs = [
   {
     question: "Can I start by sending photos?",
     answer:
-      "Yes. Send photos of your windows and your contact details to request a quote. Robin will review the project with you; final pricing may require measurements and product selections.",
+      "Yes. Send photos of your windows and your contact details. Robin will review your project and discuss next steps with you.",
   },
   {
     question: "Do you offer an in-home consultation?",
     answer:
-      "Yes. Contact Pasadena Shades & Shutters to request a in-home consultation and discuss availability.",
+      "Yes. Contact Pasadena Shades & Shutters to request an in-home consultation and discuss availability.",
   },
   {
     question: "Which window treatments can I choose?",
@@ -137,13 +230,8 @@ export const faqs = [
       "Explore shutters, shades, wood and faux wood blinds, custom drapery, and motorized window treatments. We can help you choose options for your room.",
   },
   {
-    question: "How much will my project cost?",
-    answer:
-      "Pricing depends on the products, materials, measurements, and installation needs. Request a quote for your windows.",
-  },
-  {
     question: "How long will my order take?",
     answer:
-      "Timing varies with your product selections and manufacturer availability. Confirm current lead times when reviewing your quote.",
+      "Timing varies with your product selections and manufacturer availability. Confirm current lead times when reviewing your selections.",
   },
 ];
