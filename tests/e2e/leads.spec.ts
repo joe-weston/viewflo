@@ -67,13 +67,13 @@ test("consultation validates all steps, preserves answers, and shows queued rece
     fullPage: true,
   });
   await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("Your name").fill("Synthetic QA");
+  await page.getByLabel("Your full name").fill("Synthetic QA");
   await page.getByLabel("Email", { exact: true }).fill("qa@example.invalid");
   await page.getByLabel("Email", { exact: true }).scrollIntoViewIfNeeded();
   await page.screenshot({
     path: `${evidence}/${info.project.name}-consultation-contact-viewport.png`,
   });
-  await page.getByLabel("Phone", { exact: true }).fill("818-555-0100");
+  await page.getByLabel("Phone number", { exact: true }).fill("818-555-0100");
   await page.locator("#lead-consent").check();
   await page.getByRole("button", { name: "Back", exact: true }).click();
   await expect(
@@ -158,7 +158,7 @@ test("photo intake requires email, supports remove and retry with the same ident
   await page
     .locator("#photos")
     .setInputFiles("public/818aaed5-2de2-408a-9918-b48936405ebb.jpg");
-  await page.getByLabel("Your name").fill("Synthetic QA");
+  await page.getByLabel("Your full name").fill("Synthetic QA");
   await page.locator("#lead-consent").check();
   await submit.click();
   await expect(page.locator("form").getByRole("alert")).toContainText(

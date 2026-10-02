@@ -27,3 +27,9 @@ No remaining observed clipping, overlap, horizontal page scroll, nested scrollba
 ## Limits
 
 Twenty affected public Playwright checks and two intercepted analytics checks pass. Canonical authentication credentials are absent, so real Supabase owner inbox/photo viewing and sign-in return navigation are blocked. Hosted Turnstile and real Resend delivery/mailbox receipt are also blocked. No fixture screenshot is treated as proof of persistence or email arrival. The configured Supabase project has no tables, users, buckets or recorded migrations at inspection; a prepared migration does not make its hosted workflow ready.
+
+## Current staging integration
+
+Merged staging through 2254f80: Robin's optimized portrait and distinct phone-field guidance are preserved. The newer Google-only excerpts are superseded by the explicitly requested six-review snapshot. The inherited phone test was updated to omit the removed budget question. Reran lint, typecheck, 72 unit/API/database tests and build successfully. The combined browser suite includes the phone validation regression; inspected its desktop error screenshot. Hosted gates above remain open.
+
+Combined staging integration: all 22 public browser checks passed on desktop/mobile, including the inherited phone regression. Inspected both phone error screenshots: clear field identification, readable correction guidance and no clipping. Two intercepted analytics checks passed before integration; analytics implementation was unaffected by the staging merge.
