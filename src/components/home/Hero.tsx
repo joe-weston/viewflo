@@ -29,8 +29,8 @@ export function Hero() {
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone">
             Shutters, shades, blinds, drapery, and motorized treatments —
             designed and measured by Robin Alvarez, an interior designer of 25
-            years. Explore materials, light control, and finishes for your
-            home. Request details about an in-home consultation.
+            years. Explore materials, light control, and finishes for your home.
+            Request details about an in-home consultation.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -38,7 +38,11 @@ export function Hero() {
               Request a Consultation
               <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button href="/pasadena-shades-and-shutters/send-photos" variant="secondary" size="lg">
+            <Button
+              href="/pasadena-shades-and-shutters/photo-intake"
+              variant="secondary"
+              size="lg"
+            >
               <CameraIcon className="h-4 w-4" aria-hidden="true" />
               Send Photos of Your Windows
             </Button>

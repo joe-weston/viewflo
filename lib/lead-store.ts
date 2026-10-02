@@ -29,6 +29,13 @@ export function leadReady() {
     )
   );
 }
+export function emailDeliveryReady() {
+  return !!(
+    (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL) &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY &&
+    process.env.RESEND_API_KEY
+  );
+}
 export async function verifyLead(token: string, hostname: string) {
   if (
     !process.env.LEAD_INTAKE_HOSTNAMES?.split(",")

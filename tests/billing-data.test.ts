@@ -13,6 +13,9 @@ function provider(
     cursorCustomer?: string;
     multiple?: boolean;
     hasMoreSubscriptions?: boolean;
+    subscriptionLive?: boolean;
+    priceLive?: boolean;
+    collection?: string;
   } = {},
 ) {
   const customer = overrides.customer ?? "cus_site";
@@ -35,21 +38,24 @@ function provider(
   const subscription = {
     id: "sub_site",
     customer,
-    livemode: false,
+    livemode: overrides.subscriptionLive ?? false,
+    metadata: { tenant_id: "tenant_site" },
     status: overrides.status ?? "active",
     cancel_at_period_end: overrides.cancel ?? false,
     cancel_at: null,
-    collection_method: "charge_automatically",
+    collection_method: overrides.collection ?? "charge_automatically",
     latest_invoice: "in_new",
     items: {
+      has_more: false,
       data: [
         {
           quantity: 1,
           current_period_end: 1765000000,
           price: {
+            id: "price_site",
             unit_amount: 16900,
             currency: "usd",
-            livemode: false,
+            livemode: overrides.priceLive ?? false,
             recurring: {
               interval: "month",
               interval_count: 1,
@@ -103,6 +109,50 @@ test("billing reads tenant-scoped subscriptions and invoices with real amounts/d
     { customer: "cus_site", status: "all", limit: 100 },
     { customer: "cus_site", limit: 10 },
   ]);
+});
+
+test("live history uses live subscriptions, prices and invoices only; send-invoice renewal is visible", async () => {
+  const p = provider({
+    live: true,
+    subscriptionLive: true,
+    priceLive: true,
+    collection: "send_invoice",
+  });
+  const result = await readBillingSnapshot(
+    p.stripe,
+    "cus_site",
+    undefined,
+    "live",
+    { tenant: "tenant_site", price: "price_site" },
+  );
+  assert.equal(result.nextBillingAt, 1765000000);
+  assert.equal(result.invoices.length, 1);
+  await assert.rejects(
+    readBillingSnapshot(provider().stripe, "cus_site", undefined, "live"),
+  );
+  await assert.rejects(
+    readBillingSnapshot(p.stripe, "cus_site", undefined, "test"),
+  );
+  await assert.rejects(
+    readBillingSnapshot(p.stripe, "cus_site", undefined, "live", {
+      tenant: "other",
+      price: "price_site",
+    }),
+  );
+  await assert.rejects(
+    readBillingSnapshot(p.stripe, "cus_site", undefined, "live", {
+      tenant: "tenant_site",
+      price: "price_services",
+    }),
+  );
+  await assert.rejects(
+    readBillingSnapshot(
+      provider({ live: true, subscriptionLive: true }).stripe,
+      "cus_site",
+      undefined,
+      "live",
+    ),
+  );
 });
 test("scheduled cancellation shows service end rather than a next charge", async () => {
   const result = await readBillingSnapshot(

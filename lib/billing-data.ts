@@ -1,3 +1,8 @@
+import {
+  assertMode,
+  assertSubscription,
+  type BillingMode,
+} from "./billing-mode";
 import type Stripe from "stripe";
 import { isHostingPrice } from "./commercial-policy";
 import { invoiceCursor } from "./portal-urls";
@@ -69,6 +74,8 @@ export async function readBillingSnapshot(
   stripe: Stripe,
   customer: string | null,
   cursorValue?: unknown,
+  mode: BillingMode = "test",
+  mapping?: { tenant: string; price: string },
 ): Promise<BillingSnapshot> {
   const cursor = invoiceCursor(cursorValue);
   const result: BillingSnapshot = {
@@ -83,7 +90,10 @@ export async function readBillingSnapshot(
   }
   if (cursor) {
     const anchor = await stripe.invoices.retrieve(cursor);
-    if (anchor.livemode || !sameCustomer(anchor.customer, customer))
+    if (
+      anchor.livemode !== (mode === "live") ||
+      !sameCustomer(anchor.customer, customer)
+    )
       throw new Error("Invoice account mismatch");
   }
   const [subscriptions, invoices] = await Promise.all([
@@ -95,9 +105,13 @@ export async function readBillingSnapshot(
     }),
   ]);
   if (subscriptions.has_more) throw new Error("Subscription review required");
+  if (mapping)
+    for (const subscription of subscriptions.data)
+      assertSubscription(subscription, { ...mapping, mode, customer });
   if (
     subscriptions.data.some(
-      (s) => s.livemode || !sameCustomer(s.customer, customer),
+      (s) =>
+        s.livemode !== (mode === "live") || !sameCustomer(s.customer, customer),
     )
   )
     throw new Error("Subscription account mismatch");
@@ -109,11 +123,13 @@ export async function readBillingSnapshot(
   result.canManage = true;
   result.canCheckout = !current;
   if (current) {
+    assertMode(current, mode);
     const item = current.items.data[0];
     if (
+      current.items.has_more ||
       current.items.data.length !== 1 ||
       item.quantity !== 1 ||
-      item.price.livemode ||
+      item.price.livemode !== (mode === "live") ||
       !isHostingPrice(item.price)
     )
       throw new Error("Subscription price review required");
@@ -122,23 +138,26 @@ export async function readBillingSnapshot(
     result.currency = item.price.currency;
     if (current.cancel_at_period_end || current.cancel_at)
       result.endsAt = current.cancel_at ?? item.current_period_end;
-    else if (
-      current.status === "active" &&
-      current.collection_method === "charge_automatically"
-    )
+    else if (current.status === "active")
       result.nextBillingAt = item.current_period_end;
     if (current.latest_invoice) {
       const invoice =
         typeof current.latest_invoice === "string"
           ? await stripe.invoices.retrieve(current.latest_invoice)
           : current.latest_invoice;
-      if (invoice.livemode || !sameCustomer(invoice.customer, customer))
+      if (
+        invoice.livemode !== (mode === "live") ||
+        !sameCustomer(invoice.customer, customer)
+      )
         throw new Error("Invoice account mismatch");
       result.paymentAttemptAt = invoice.next_payment_attempt;
     }
   }
   if (
-    invoices.data.some((i) => i.livemode || !sameCustomer(i.customer, customer))
+    invoices.data.some(
+      (i) =>
+        i.livemode !== (mode === "live") || !sameCustomer(i.customer, customer),
+    )
   )
     throw new Error("Invoice account mismatch");
   result.invoices = invoices.data

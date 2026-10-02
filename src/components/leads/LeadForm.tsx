@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import { TenantLink as Link } from "../TenantLink";
+import Link from "next/link";
 import { CameraIcon, CheckIcon } from "lucide-react";
 import { Button } from "../ui/Button";
 import {
@@ -115,10 +115,10 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
   const previewRef = useRef<string[]>([]);
   const errorRef = useRef<HTMLParagraphElement>(null);
   const stepRef = useRef<HTMLHeadingElement>(null);
+  const receiptRef = useRef<HTMLHeadingElement>(null);
   const sending = useRef(false);
   const [scriptReady, setScriptReady] = useState(false);
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-  const photoInput = useRef<HTMLInputElement>(null);
   const showSecurity = (!consultation || step === 2) && status !== "received";
   useEffect(
     () => () => {
@@ -133,6 +133,15 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
   useEffect(() => {
     if (consultation && step > 0) stepRef.current?.focus();
   }, [step, consultation]);
+  useEffect(() => {
+    if (status === "received") {
+      receiptRef.current?.focus({ preventScroll: true });
+      receiptRef.current?.scrollIntoView({
+        block: "center",
+        behavior: "instant",
+      });
+    }
+  }, [status]);
   useEffect(() => {
     if (
       !scriptReady ||
@@ -357,7 +366,6 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
         <CameraIcon aria-hidden className="mb-3 h-6 w-6 text-brass" />
         <input
           id="photos"
-          ref={photoInput}
           type="file"
           multiple
           accept="image/jpeg,image/png"
@@ -372,6 +380,9 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
               return;
             }
             replacePhotos(next);
+            // Retain Files in state; clear the picker so removing and selecting
+            // the same file again still produces a change event.
+            event.target.value = "";
             setError("");
           }}
         />
@@ -395,10 +406,9 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
                   type="button"
                   className="min-h-11 p-2 text-sm underline"
                   aria-label={`Remove photo ${index + 1}`}
-                  onClick={() => {
-                    replacePhotos(photos.filter((_, i) => i !== index));
-                    if (photoInput.current) photoInput.current.value = "";
-                  }}
+                  onClick={() =>
+                    replacePhotos(photos.filter((_, i) => i !== index))
+                  }
                 >
                   Remove
                 </button>
@@ -520,7 +530,13 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
         className="rounded-3xl border border-linen bg-white p-8 shadow-card"
       >
         <CheckIcon aria-hidden className="h-10 w-10 text-brass" />
-        <h2 className="mt-5 font-display text-3xl">Your request is saved</h2>
+        <h2
+          ref={receiptRef}
+          tabIndex={-1}
+          className="mt-5 scroll-mt-40 font-display text-3xl"
+        >
+          Your request is saved
+        </h2>
         <p className="mt-4 leading-relaxed text-stone">
           Thank you. We will review your request and contact you about next
           steps. This is not a confirmed appointment or final price.
@@ -545,6 +561,15 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
   return (
     <form
       onSubmit={submit}
+      onChange={(event) => {
+        // Clear stale validation after controlled field handlers have saved the value.
+        // File selection owns its own errors and must not have them cleared here.
+        if (
+          !(event.target instanceof HTMLInputElement) ||
+          event.target.type !== "file"
+        )
+          setError("");
+      }}
       noValidate
       className="min-w-0 rounded-3xl border border-linen bg-white p-6 shadow-card md:p-9"
     >

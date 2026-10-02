@@ -1,22 +1,22 @@
 import { stripeClient } from "../../../../lib/billing";
+import {
+  billingConfig,
+  assertMode,
+  assertCustomer,
+  assertSubscription,
+} from "../../../../lib/billing-mode";
 import { operatorDb } from "../../../../lib/portal";
+import { verifyBillingEvent } from "../../../../lib/billing-webhook";
 export async function POST(request: Request) {
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
   const signature = request.headers.get("stripe-signature");
-  if (!secret || !signature)
-    return new Response("Unavailable", { status: 400 });
-  let event;
+  let config, stripe, event;
   try {
-    event = stripeClient().webhooks.constructEvent(
-      await request.text(),
-      signature,
-      secret,
-    );
+    config = billingConfig();
+    stripe = stripeClient();
+    event = verifyBillingEvent(await request.text(), signature, config);
   } catch {
-    return new Response("Invalid signature", { status: 400 });
+    return new Response("Invalid billing event", { status: 400 });
   }
-  if (event.livemode)
-    return new Response("Test mode required", { status: 400 });
   if (
     ![
       "customer.subscription.created",
@@ -26,25 +26,38 @@ export async function POST(request: Request) {
   )
     return new Response("Ignored");
   try {
-    const object = event.data.object as { id: string; customer: string };
-    const stripe = stripeClient();
     const account = await stripe.accounts.retrieve(null);
-    if (account.id !== process.env.STRIPE_EXPECTED_ACCOUNT_ID)
-      throw new Error("Account mismatch");
-    // Retrieve current state: delayed/reordered payloads do not overwrite newer provider status.
+    if (account.id !== config.account) throw new Error("Account mismatch");
+    const object = event.data.object as { id: string };
     const subscription = await stripe.subscriptions.retrieve(object.id);
+    assertMode(subscription, config.mode);
     const customer =
       typeof subscription.customer === "string"
         ? subscription.customer
         : subscription.customer.id;
     const db = operatorDb();
-    const { data: mapping } = await db
+    const { data: mapping, error: mappingError } = await db
       .from("vf_billing")
-      .select("stripe_account_id")
+      .select("tenant_id,stripe_account_id,stripe_price_id")
       .eq("stripe_customer_id", customer)
+      .eq("stripe_mode", config.mode)
+      .eq("stripe_account_id", account.id)
       .maybeSingle();
-    if (!mapping || mapping.stripe_account_id !== account.id)
-      throw new Error("Unknown customer");
+    if (mappingError || !mapping) throw new Error("Unknown customer");
+    assertCustomer(
+      await stripe.customers.retrieve(customer),
+      customer,
+      mapping.tenant_id,
+      config.mode,
+    );
+    const expected = {
+      mode: config.mode,
+      customer,
+      tenant: mapping.tenant_id,
+      price: mapping.stripe_price_id,
+    };
+    assertSubscription(subscription, expected);
+    // Refresh current provider state; delayed payloads never declare payment success.
     const subscriptions = await stripe.subscriptions.list({
       customer,
       status: "all",
@@ -52,6 +65,7 @@ export async function POST(request: Request) {
     });
     if (subscriptions.has_more)
       throw new Error("Subscription reconciliation required");
+    for (const item of subscriptions.data) assertSubscription(item, expected);
     const active = subscriptions.data.filter(
       (s) => !["canceled", "incomplete_expired"].includes(s.status),
     );
@@ -66,6 +80,8 @@ export async function POST(request: Request) {
       p_customer: customer,
       p_subscription: current.id,
       p_status: current.status,
+      p_mode: config.mode,
+      p_account: account.id,
     });
     if (error) throw error;
     return new Response("Received");

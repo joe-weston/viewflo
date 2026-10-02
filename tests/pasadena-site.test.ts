@@ -81,8 +81,8 @@ test("apex, platform and prefixed custom URLs consolidate in one hop", () => {
 test("aliases normalize index.html and trailing slashes without wildcard redirects", () => {
   assert.equal(normalizePublicPath("/ca-shutters/index.html"), "ca-shutters");
   assert.equal(
-    publicRedirect("localhost:3188", tenant + "/photo-intake/"),
-    tenant + "/send-photos/",
+    publicRedirect("localhost:3188", tenant + "/send-photos/"),
+    tenant + "/photo-intake/",
   );
   assert.equal(
     publicRedirect("www.pasadenashadesandshutters.com", "/unknown.php"),

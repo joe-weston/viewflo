@@ -1,3 +1,5 @@
+Current candidate addendum (October 1, 2026): RELEASE-CANDIDATE.md supersedes the historical test-only restriction below with explicit, separately gated test/live mappings. No live action or legal activation is authorized. The original configuration and blocked checks below remain historical evidence.
+
 # Tenant manager billing setup
 
 Implementation: manager email magic link, tenant-authorized billing, customer-scoped Stripe reads and hosted payment-method management. Pasadena's public domains use `/admin/billing/`; the configured platform uses `/pasadena-shades-and-shutters/admin/billing/`. No production configuration, customer account provisioning, email send, migration or deployment is performed by this implementation task.
