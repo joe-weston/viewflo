@@ -114,12 +114,14 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
   const identity = useRef<{ key: string; id: string } | null>(null);
   const previewRef = useRef<string[]>([]);
   const errorRef = useRef<HTMLParagraphElement>(null);
+  const phoneRef = useRef<HTMLInputElement>(null);
   const stepRef = useRef<HTMLHeadingElement>(null);
   const receiptRef = useRef<HTMLHeadingElement>(null);
   const sending = useRef(false);
   const [scriptReady, setScriptReady] = useState(false);
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const showSecurity = (!consultation || step === 2) && status !== "received";
+  const phoneError = error === "Enter a valid phone number.";
   useEffect(
     () => () => {
       xhr.current?.abort();
@@ -128,8 +130,14 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
     [],
   );
   useEffect(() => {
-    if (error) errorRef.current?.focus();
-  }, [error]);
+    if (phoneError) {
+      phoneRef.current?.focus({ preventScroll: true });
+      phoneRef.current?.scrollIntoView({
+        block: "center",
+        behavior: "instant",
+      });
+    } else if (error) errorRef.current?.focus();
+  }, [error, phoneError]);
   useEffect(() => {
     if (consultation && step > 0) stepRef.current?.focus();
   }, [step, consultation]);
@@ -452,40 +460,64 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
   );
   const contactFields = (
     <div className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="block font-medium" htmlFor="lead-name">
-          Your name
-          <input
-            id="lead-name"
-            className={inputClass}
-            value={name}
-            maxLength={100}
-            autoComplete="name"
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
+      <label className="block font-medium" htmlFor="lead-name">
+        Your full name
+        <input
+          id="lead-name"
+          name="name"
+          className={inputClass}
+          value={name}
+          maxLength={100}
+          autoComplete="name"
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </label>
+      <div>
         <label className="block font-medium" htmlFor="lead-phone">
-          Phone{" "}
+          Phone number{" "}
           {!consultation && (
             <span className="text-sm font-normal text-stone">(optional)</span>
           )}
           <input
             id="lead-phone"
+            ref={phoneRef}
+            name="phone"
             type="tel"
-            className={inputClass}
+            inputMode="tel"
+            className={`${inputClass} ${phoneError ? "!border-red-500 !bg-red-50 focus-visible:!outline-red-700" : ""}`}
             value={phone}
             maxLength={40}
             autoComplete="tel"
+            placeholder="e.g. 818-555-0100"
+            aria-invalid={phoneError || undefined}
+            aria-describedby={
+              phoneError
+                ? "lead-phone-help lead-phone-error"
+                : "lead-phone-help"
+            }
             onChange={(e) => setPhone(e.target.value)}
             required={consultation}
           />
         </label>
+        <p id="lead-phone-help" className="mt-2 text-sm text-stone">
+          Enter a phone number with area code where we can reach you.
+        </p>
+        {phoneError && (
+          <p
+            id="lead-phone-error"
+            role="alert"
+            className="mt-2 text-sm text-red-900"
+          >
+            Enter a valid phone number, including area code (e.g. 818-555-0100).
+          </p>
+        )}
       </div>
       <label className="block font-medium" htmlFor="lead-email">
         Email
         <input
           id="lead-email"
+          name="email"
           type="email"
           className={inputClass}
           value={email}
@@ -688,7 +720,7 @@ export function LeadForm({ kind }: { kind: LeadKind }) {
           />
         </div>
       )}
-      {error && (
+      {error && !phoneError && (
         <p
           role="alert"
           ref={errorRef}
