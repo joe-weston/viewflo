@@ -116,7 +116,7 @@ export function GalleryPage() {
               Book a Design Consultation
             </Button>
             <Button
-              href="/pasadena-shades-and-shutters/send-photos"
+              href="/pasadena-shades-and-shutters/photo-intake"
               variant="secondary"
             >
               Send Photos

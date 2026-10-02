@@ -1,3 +1,5 @@
+Current candidate addendum (October 1, 2026): RELEASE-CANDIDATE.md supersedes the historical test-only restriction below with explicit, separately gated test/live mappings. No live action or legal activation is authorized. The original configuration and blocked checks below remain historical evidence.
+
 # Tenant billing implementation — release gates
 
 ## September 30 manager portal update

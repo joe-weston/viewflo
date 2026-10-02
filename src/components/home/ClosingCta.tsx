@@ -27,7 +27,7 @@ export function ClosingCta() {
                 <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />
               </Button>
               <Link
-                href="/pasadena-shades-and-shutters/send-photos"
+                href="/pasadena-shades-and-shutters/photo-intake"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-cream/35 px-7 py-3.5 text-[0.95rem] font-medium text-cream transition-colors duration-150 ease-out hover:border-cream/80"
               >
                 <CameraIcon className="h-4 w-4" aria-hidden="true" />

@@ -1,7 +1,7 @@
 import {
   authorizedCron,
   deliverLeadEmails,
-  leadReady,
+  emailDeliveryReady,
 } from "../../../../lib/lead-store";
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const headers = { "Cache-Control": "no-store" };
   if (!authorizedCron(request.headers.get("authorization")))
     return Response.json({ error: "Unauthorized" }, { status: 401, headers });
-  if (!leadReady() || !process.env.RESEND_API_KEY)
+  if (!emailDeliveryReady())
     return Response.json(
       { error: "Delivery unavailable" },
       { status: 503, headers },

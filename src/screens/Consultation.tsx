@@ -23,7 +23,7 @@ export function Consultation() {
             photos ready? You can also{" "}
             <Link
               className="underline underline-offset-4"
-              href="/pasadena-shades-and-shutters/send-photos"
+              href="/pasadena-shades-and-shutters/photo-intake"
             >
               send photos to request a quote
             </Link>
@@ -50,7 +50,7 @@ export function Consultation() {
             </p>
             <div className="mt-7 border-t border-linen pt-7">
               <Button
-                href="/pasadena-shades-and-shutters/send-photos"
+                href="/pasadena-shades-and-shutters/photo-intake"
                 variant="secondary"
                 className="w-full"
               >

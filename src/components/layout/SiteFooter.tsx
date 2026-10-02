@@ -99,7 +99,7 @@ export function SiteFooter() {
                 Request a Consultation
               </Link>
               <Link
-                href="/pasadena-shades-and-shutters/send-photos"
+                href="/pasadena-shades-and-shutters/photo-intake"
                 className="inline-flex items-center justify-center rounded-full border border-cream/30 px-5 py-2.5 text-sm font-medium text-cream transition-colors duration-150 ease-out hover:border-cream/70"
               >
                 Send Photos of Your Windows
@@ -116,7 +116,9 @@ export function SiteFooter() {
           <nav aria-label="Policies" className="flex gap-5">
             <Link href="/pasadena-shades-and-shutters/privacy">Privacy</Link>
             <Link href="/pasadena-shades-and-shutters/terms">Terms</Link>
-            <Link href="https://www.pasadenashadesandshutters.com/sitemap.xml">Sitemap</Link>
+            <Link href="https://www.pasadenashadesandshutters.com/sitemap.xml">
+              Sitemap
+            </Link>
           </nav>
         </div>
       </div>

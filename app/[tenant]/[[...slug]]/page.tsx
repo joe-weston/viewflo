@@ -27,7 +27,7 @@ const titles: Record<string, string> = {
   "": "Custom Window Treatments in Pasadena",
   gallery: "Local Window Treatment Projects",
   consultation: "Request a Design Consultation",
-  "send-photos": "Send Photos of Your Windows",
+  "photo-intake": "Send Photos of Your Windows",
   privacy: "Privacy Policy",
   terms: "Terms of Use",
 };
@@ -78,7 +78,7 @@ export default async function Page({ params, searchParams }: Props) {
       : "/" + tenant;
   if (route && legacyRedirects[route])
     permanentRedirect(prefix + legacyRedirects[route]);
-  if (route === "photo-intake") permanentRedirect(prefix + "/send-photos/");
+  if (route === "send-photos") permanentRedirect(prefix + "/photo-intake/");
   if (!publicRoutes.includes(route as (typeof publicRoutes)[number]))
     notFound();
   const content =
@@ -88,7 +88,7 @@ export default async function Page({ params, searchParams }: Props) {
       <GalleryPage />
     ) : route === "consultation" ? (
       <Consultation />
-    ) : route === "send-photos" ? (
+    ) : route === "photo-intake" ? (
       <SendPhotos />
     ) : route === "privacy" || route === "terms" ? (
       <LegalPage kind={route} />

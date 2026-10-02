@@ -71,7 +71,7 @@ export const publicRoutes = [
   "",
   "gallery",
   "consultation",
-  "send-photos",
+  "photo-intake",
   "services/shutters",
   "services/shades",
   "services/blinds",
@@ -101,7 +101,7 @@ export function publicRedirect(
   );
   if (platform) return null;
   const legacy = route && legacyRedirects[route];
-  const target = legacy || (route === "photo-intake" ? "/send-photos/" : null);
+  const target = legacy || (route === "send-photos" ? "/photo-intake/" : null);
   const originRedirect =
     (custom &&
       (hostname !== "www.pasadenashadesandshutters.com" || prefixed)) ||

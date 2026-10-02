@@ -18,8 +18,13 @@ export function ServiceDetail({ slug }: { slug: string }) {
           Take a look at what we do make, or just ask us directly.
         </p>
         <div className="mt-8 flex justify-center gap-3">
-          <Button href="/pasadena-shades-and-shutters/#services">See all services</Button>
-          <Button href="/pasadena-shades-and-shutters/consultation" variant="secondary">
+          <Button href="/pasadena-shades-and-shutters/#services">
+            See all services
+          </Button>
+          <Button
+            href="/pasadena-shades-and-shutters/consultation"
+            variant="secondary"
+          >
             Ask about it
           </Button>
         </div>
@@ -96,10 +101,17 @@ export function ServiceDetail({ slug }: { slug: string }) {
             </ul>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button href="/pasadena-shades-and-shutters/consultation" size="lg">
+              <Button
+                href="/pasadena-shades-and-shutters/consultation"
+                size="lg"
+              >
                 Request a Consultation
               </Button>
-              <Button href="/pasadena-shades-and-shutters/send-photos" variant="secondary" size="lg">
+              <Button
+                href="/pasadena-shades-and-shutters/photo-intake"
+                variant="secondary"
+                size="lg"
+              >
                 Send Photos of Your Windows
               </Button>
             </div>
@@ -115,8 +127,17 @@ export function ServiceDetail({ slug }: { slug: string }) {
             />
 
             <aside className="mt-5 rounded-2xl border border-linen bg-sand/60 p-5">
-              <p className="text-[0.95rem] leading-relaxed text-ink/85">Every room has different light and privacy needs. Discuss materials, measurements, pricing, and timing with Robin before deciding.</p>
-              <Link href="/pasadena-shades-and-shutters/consultation" className="mt-3 inline-block text-sm text-brass">Request details →</Link>
+              <p className="text-[0.95rem] leading-relaxed text-ink/85">
+                Every room has different light and privacy needs. Discuss
+                materials, measurements, pricing, and timing with Robin before
+                deciding.
+              </p>
+              <Link
+                href="/pasadena-shades-and-shutters/consultation"
+                className="mt-3 inline-block text-sm text-brass"
+              >
+                Request details →
+              </Link>
             </aside>
           </div>
         </div>

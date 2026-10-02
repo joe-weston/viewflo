@@ -22,7 +22,7 @@ export function LegacyContent({
   root
     .find('[id^="wufoo-"]')
     .replaceWith(
-      '<p>Please call <a href="tel:+18186185288">818-618-5288</a> for assistance, or <a href="/pasadena-shades-and-shutters/send-photos">send window photos to request a quote</a>.</p>',
+      '<p>Please call <a href="tel:+18186185288">818-618-5288</a> for assistance, or <a href="/pasadena-shades-and-shutters/photo-intake">send window photos to request a quote</a>.</p>',
     );
   root.find("*").each((_i, e) => {
     const el = $(e);

@@ -4,6 +4,24 @@ import path from "node:path";
 const evidence = path.resolve("tmp/ui-verification/resend-lead-intake");
 const prefix = "/pasadena-shades-and-shutters";
 test.beforeAll(() => fs.mkdirSync(evidence, { recursive: true }));
+test("legacy photo URL redirects once to the canonical form", async ({
+  request,
+  page,
+}) => {
+  const redirect = await request.get(`${prefix}/send-photos/`, {
+    maxRedirects: 0,
+  });
+  expect(redirect.status()).toBe(308);
+  expect(redirect.headers().location).toBe(`${prefix}/photo-intake/`);
+  await page.goto(`${prefix}/send-photos/`);
+  await expect(page).toHaveURL(new RegExp(`${prefix}/photo-intake/$`));
+  await expect(
+    page.getByRole("heading", {
+      name: "Send photos of your windows",
+      exact: true,
+    }),
+  ).toBeVisible();
+});
 test("consultation validates all steps, preserves answers, and shows queued receipt", async ({
   page,
 }, info) => {
@@ -28,7 +46,9 @@ test("consultation validates all steps, preserves answers, and shows queued rece
     fullPage: true,
   });
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.locator("form").getByRole("alert")).toContainText("Choose a project type");
+  await expect(page.locator("form").getByRole("alert")).toContainText(
+    "Choose a project type",
+  );
   await expect(page.locator("form").getByRole("alert")).toBeFocused();
   await page.getByRole("checkbox", { name: "Shutters", exact: true }).check();
   await page.getByRole("radio", { name: "1–2 windows", exact: true }).check();
@@ -48,6 +68,10 @@ test("consultation validates all steps, preserves answers, and shows queued rece
   await page.getByRole("button", { name: "Continue" }).click();
   await page.getByLabel("Your name").fill("Synthetic QA");
   await page.getByLabel("Email", { exact: true }).fill("qa@example.invalid");
+  await page.getByLabel("Email", { exact: true }).scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: `${evidence}/${info.project.name}-consultation-contact-viewport.png`,
+  });
   await page.getByLabel("Phone", { exact: true }).fill("818-555-0100");
   await page.locator("#lead-consent").check();
   await page.getByRole("button", { name: "Back", exact: true }).click();
@@ -76,6 +100,10 @@ test("consultation validates all steps, preserves answers, and shows queued rece
   await expect(page.getByRole("status")).toContainText(
     "do not need to submit it again",
   );
+  await expect(
+    page.getByRole("heading", { name: "Your request is saved" }),
+  ).toBeFocused();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: `${evidence}/${info.project.name}-consultation-queued.png`,
     fullPage: true,
@@ -106,8 +134,8 @@ test("photo intake requires email, supports remove and retry with the same ident
         json: { reference: "synthetic-photo-reference", emailStatus: "sent" },
       });
   });
-  await page.goto(`${prefix}/send-photos/`);
-  await expect(page).toHaveURL(`${prefix}/send-photos/`);
+  await page.goto(`${prefix}/photo-intake/`);
+  await expect(page).toHaveURL(`${prefix}/photo-intake/`);
   await page.screenshot({
     path: `${evidence}/${info.project.name}-photo-empty.png`,
     fullPage: true,
@@ -116,7 +144,9 @@ test("photo intake requires email, supports remove and retry with the same ident
     name: "Send photos to request a quote",
   });
   await submit.click();
-  await expect(page.locator("form").getByRole("alert")).toContainText("between 1 and 3");
+  await expect(page.locator("form").getByRole("alert")).toContainText(
+    "between 1 and 3",
+  );
   await page
     .locator("#photos")
     .setInputFiles("public/818aaed5-2de2-408a-9918-b48936405ebb.jpg");
@@ -130,14 +160,29 @@ test("photo intake requires email, supports remove and retry with the same ident
   await page.getByLabel("Your name").fill("Synthetic QA");
   await page.locator("#lead-consent").check();
   await submit.click();
-  await expect(page.locator("form").getByRole("alert")).toContainText("valid email");
+  await expect(page.locator("form").getByRole("alert")).toContainText(
+    "valid email",
+  );
   await page.getByLabel("Email", { exact: true }).fill("qa@example.invalid");
+  await page.getByLabel("Email", { exact: true }).scrollIntoViewIfNeeded();
+  await expect(page.getByLabel("Email", { exact: true })).toHaveValue(
+    "qa@example.invalid",
+  );
+  await expect(page.locator("form").getByRole("alert")).toHaveCount(0);
+  await page.screenshot({
+    path: `${evidence}/${info.project.name}-photo-contact-viewport.png`,
+  });
   await page.screenshot({
     path: `${evidence}/${info.project.name}-photo-selected.png`,
     fullPage: true,
   });
   await submit.click();
-  await expect(page.locator("form").getByRole("alert")).toContainText("same form");
+  await expect(page.locator("form").getByRole("alert")).toContainText(
+    "same form",
+  );
+  await page.screenshot({
+    path: `${evidence}/${info.project.name}-photo-error-viewport.png`,
+  });
   await page.screenshot({
     path: `${evidence}/${info.project.name}-photo-error.png`,
     fullPage: true,
@@ -151,6 +196,10 @@ test("photo intake requires email, supports remove and retry with the same ident
   );
   expect(identities[0]).not.toBe("");
   expect(identities[0]).toBe(identities[1]);
+  await expect(
+    page.getByRole("heading", { name: "Your request is saved" }),
+  ).toBeFocused();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: `${evidence}/${info.project.name}-photo-sent.png`,
     fullPage: true,

@@ -38,7 +38,10 @@ export function SiteHeader() {
       </div>
 
       <div className="mx-auto flex max-w-content items-center justify-between gap-4 px-5 py-4 md:px-6">
-        <Link href="/pasadena-shades-and-shutters/" className="flex items-center gap-3">
+        <Link
+          href="/pasadena-shades-and-shutters/"
+          className="flex items-center gap-3"
+        >
           <span
             aria-hidden="true"
             className="flex h-10 w-10 items-center justify-center rounded-md bg-walnut"
@@ -73,10 +76,15 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-3 xl:flex">
-          <Button href="/pasadena-shades-and-shutters/send-photos" variant="secondary">
+          <Button
+            href="/pasadena-shades-and-shutters/photo-intake"
+            variant="secondary"
+          >
             Send photos
           </Button>
-          <Button href="/pasadena-shades-and-shutters/consultation">Request a Consultation</Button>
+          <Button href="/pasadena-shades-and-shutters/consultation">
+            Request a Consultation
+          </Button>
         </div>
 
         <button
@@ -116,7 +124,11 @@ export function SiteHeader() {
             <Button href="/pasadena-shades-and-shutters/consultation" size="lg">
               Request a Consultation
             </Button>
-            <Button href="/pasadena-shades-and-shutters/send-photos" variant="secondary" size="lg">
+            <Button
+              href="/pasadena-shades-and-shutters/photo-intake"
+              variant="secondary"
+              size="lg"
+            >
               Send Photos of Your Windows
             </Button>
             <a

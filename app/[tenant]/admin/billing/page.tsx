@@ -52,6 +52,7 @@ export default async function Billing({
         : "Review required";
   };
   let snapshot = unavailableBilling();
+  let modeLabel = "Billing configuration unavailable.";
   let summary: string | null = null;
   let cutoffPolicy: string | null = null;
   try {
@@ -60,13 +61,20 @@ export default async function Billing({
       billing.stripe,
       billing.billing.stripe_customer_id,
       query.after,
+      billing.config.mode,
+      { tenant: billing.tenant.id, price: billing.billing.stripe_price_id },
     );
+    modeLabel =
+      billing.config.mode === "live"
+        ? "Live billing environment."
+        : "Test billing environment. No live charges.";
     summary = billing.billing.commercial_summary;
     cutoffPolicy = billing.billing.invoice_cutoff_policy;
     snapshot.canManage =
-      snapshot.canManage && !!process.env.STRIPE_PORTAL_CONFIGURATION_ID;
+      snapshot.canManage && !!billing.config.portalConfiguration;
     snapshot.canCheckout =
       snapshot.canCheckout &&
+      billing.billing.collection_method === "charge_automatically" &&
       ready &&
       !!billing.billing.hosting_start_approved_at &&
       !!cutoffPolicy &&
@@ -159,9 +167,7 @@ export default async function Billing({
           {cutoffPolicy ?? "Awaiting confirmation."}
         </p>
         {summary && <p className="document-body">{summary}</p>}
-        <p className="portal-muted">
-          Test billing environment. No live charges.
-        </p>
+        <p className="portal-muted">{modeLabel}</p>
       </section>
       {tenant === "pasadena-shades-and-shutters" && (
         <section className="portal-card billing-services">
