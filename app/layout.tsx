@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
+import "./pasadena-theme.css";
 const displayFont = Fraunces({
   subsets: ["latin"],
   weight: "variable",

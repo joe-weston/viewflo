@@ -1,0 +1,145 @@
+.pasadena-site {
+  --pasadena-cream: 255 255 255;
+  --pasadena-sand: 244 241 235;
+  --pasadena-linen: 221 226 224;
+  --pasadena-walnut: 37 44 48;
+  --pasadena-ink: 37 44 48;
+  --pasadena-stone: 82 94 99;
+  --pasadena-brass: 40 107 115;
+  --pasadena-brass-deep: 29 82 89;
+  --pasadena-sage: 40 107 115;
+  --pasadena-accent: 198 129 104;
+  background: rgb(var(--pasadena-cream));
+  color: rgb(var(--pasadena-ink));
+  min-height: 100vh;
+}
+.pasadena-site[data-palette="sage"] {
+  --pasadena-sand: 244 246 240;
+  --pasadena-linen: 220 226 215;
+  --pasadena-walnut: 41 50 44;
+  --pasadena-ink: 41 50 44;
+  --pasadena-stone: 82 96 85;
+  --pasadena-brass: 80 108 89;
+  --pasadena-brass-deep: 59 82 66;
+  --pasadena-sage: 80 108 89;
+  --pasadena-accent: 207 185 155;
+}
+.pasadena-site[data-palette="pacific"] {
+  --pasadena-sand: 238 245 247;
+  --pasadena-linen: 214 227 233;
+  --pasadena-walnut: 37 49 59;
+  --pasadena-ink: 37 49 59;
+  --pasadena-stone: 79 96 108;
+  --pasadena-brass: 44 100 130;
+  --pasadena-brass-deep: 31 74 98;
+  --pasadena-sage: 44 100 130;
+  --pasadena-accent: 215 196 165;
+}
+.pasadena-site[data-palette="clay"] {
+  --pasadena-sand: 250 243 236;
+  --pasadena-linen: 233 219 208;
+  --pasadena-walnut: 52 44 40;
+  --pasadena-ink: 52 44 40;
+  --pasadena-stone: 106 87 78;
+  --pasadena-brass: 163 79 57;
+  --pasadena-brass-deep: 127 59 42;
+  --pasadena-sage: 163 79 57;
+  --pasadena-accent: 184 199 186;
+}
+.pasadena-site ::selection {
+  background: rgb(var(--pasadena-sand));
+  color: rgb(var(--pasadena-ink));
+}
+.pasadena-site :focus-visible {
+  outline-color: rgb(var(--pasadena-brass));
+}
+.pasadena-site .preview-banner {
+  background: #fff;
+  color: #252c30;
+}
+.pasadena-site .legacy-article p,
+.pasadena-site .legacy-article ul {
+  color: rgb(var(--pasadena-stone));
+}
+
+.pasadena-site .bg-brass {
+  box-shadow: 0 10px 24px -14px rgb(var(--pasadena-brass) / 0.65);
+}
+.pasadena-site .palette-preview {
+  position: fixed;
+  z-index: 11000;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  right: 16px;
+  width: min(300px, calc(100vw - 32px));
+  padding: 12px;
+  background: #fff;
+  color: #252c30;
+  border: 1px solid #d6dfdf;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px #252c3026;
+  font:
+    14px/1.5 system-ui,
+    sans-serif;
+}
+.pasadena-site .palette-preview:has(button[aria-expanded="false"]) {
+  width: auto;
+}
+.pasadena-site .palette-preview button,
+.pasadena-site .palette-preview select {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  margin: 0;
+  border: 1px solid #a6b9bc;
+  border-radius: 6px;
+  background: #fff;
+  color: #252c30;
+  font: inherit;
+  cursor: pointer;
+}
+.pasadena-site .palette-preview button:first-child {
+  background: #286b73;
+  color: #fff;
+  border-color: #286b73;
+}
+.pasadena-site .palette-preview #palette-preview-options {
+  float: none;
+  width: auto;
+}
+.pasadena-site .palette-preview #palette-preview-options[hidden] {
+  display: none;
+}
+.pasadena-site .palette-preview p {
+  font: inherit;
+  margin: 12px 0 8px;
+}
+.pasadena-site .palette-preview label {
+  display: block;
+  margin-bottom: 6px;
+}
+.pasadena-site .palette-preview select {
+  font-size: 16px;
+}
+.pasadena-site .palette-preview-swatches {
+  display: none;
+  gap: 6px;
+  margin: 12px 0;
+  float: none;
+}
+.pasadena-site[data-palette="coastal"] [data-swatch-palette="coastal"],
+.pasadena-site[data-palette="sage"] [data-swatch-palette="sage"],
+.pasadena-site[data-palette="pacific"] [data-swatch-palette="pacific"],
+.pasadena-site[data-palette="clay"] [data-swatch-palette="clay"] {
+  display: flex;
+}
+.pasadena-site .palette-preview-swatches span {
+  flex: 1;
+  height: 24px;
+  border: 1px solid #d6dfdf;
+}
+@media print {
+  .pasadena-site .palette-preview {
+    display: none;
+  }
+}
