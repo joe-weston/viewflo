@@ -18,6 +18,8 @@ import { Consultation } from "../../../src/screens/Consultation";
 import { PhotoIntake as SendPhotos } from "../../../src/screens/PhotoIntake";
 import { ServiceDetail } from "../../../src/screens/ServiceDetail";
 import { LegalPage } from "../../../src/screens/LegalPage";
+import { PasadenaTheme } from "../../../src/tenants/pasadena/PasadenaTheme";
+import { isPalettePreviewEnabled } from "../../../lib/palette-preview";
 export const dynamic = "force-dynamic";
 type Props = {
   params: Promise<{ tenant: string; slug?: string[] }>;
@@ -115,21 +117,28 @@ export default async function Page({ params, searchParams }: Props) {
   };
   return (
     <TenantSiteProvider prefix={prefix}>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
-        }}
-      />
-      <PasadenaAnalytics
-        enabled={
-          process.env.VERCEL_ENV === "production" &&
-          process.env.PASADENA_ANALYTICS_ENABLED === "true"
-        }
-      />
-      <SiteHeader />
-      {content}
-      <SiteFooter />
+      <PasadenaTheme preview={isPalettePreviewEnabled(process.env)}>
+        {isPalettePreviewEnabled(process.env) && (
+          <p className="preview-banner">
+            Website preview - publication pending
+          </p>
+        )}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+          }}
+        />
+        <PasadenaAnalytics
+          enabled={
+            process.env.VERCEL_ENV === "production" &&
+            process.env.PASADENA_ANALYTICS_ENABLED === "true"
+          }
+        />
+        <SiteHeader />
+        {content}
+        <SiteFooter />
+      </PasadenaTheme>
     </TenantSiteProvider>
   );
 }

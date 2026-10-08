@@ -3,15 +3,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: "#FAF7F2",
-        sand: "#F3EBDF",
-        linen: "#E6DACA",
-        walnut: "#3B2E23",
-        ink: "#221B14",
-        stone: "#6E6155",
-        brass: "#9A6B34",
-        "brass-deep": "#7A5327",
-        sage: "#6F7A5F",
+        cream: "rgb(var(--pasadena-cream, 250 247 242) / <alpha-value>)",
+        sand: "rgb(var(--pasadena-sand, 243 235 223) / <alpha-value>)",
+        linen: "rgb(var(--pasadena-linen, 230 218 202) / <alpha-value>)",
+        walnut: "rgb(var(--pasadena-walnut, 59 46 35) / <alpha-value>)",
+        ink: "rgb(var(--pasadena-ink, 34 27 20) / <alpha-value>)",
+        stone: "rgb(var(--pasadena-stone, 110 97 85) / <alpha-value>)",
+        brass: "rgb(var(--pasadena-brass, 154 107 52) / <alpha-value>)",
+        "brass-deep":
+          "rgb(var(--pasadena-brass-deep, 122 83 39) / <alpha-value>)",
+        sage: "rgb(var(--pasadena-sage, 111 122 95) / <alpha-value>)",
       },
       fontFamily: {
         display: ["var(--font-fraunces)", "Georgia", "serif"],
