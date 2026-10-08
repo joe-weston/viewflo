@@ -36,7 +36,7 @@ export function OwnerStory() {
             <Image
               width={800}
               height={1000}
-              src="/tenants/pasadena/robin-alvarez-portrait.webp" sizes="(min-width: 1024px) 480px, (min-width: 768px) calc(100vw - 48px), calc(100vw - 40px)"
+              src="/tenants/pasadena/robin-alvarez-portrait-ivory.webp" sizes="(min-width: 1024px) 480px, (min-width: 768px) calc(100vw - 48px), calc(100vw - 40px)"
               alt="Robin Alvarez, owner and in-home design consultant at Pasadena Shades & Shutters"
               className="aspect-[4/5] w-full rounded-3xl object-cover object-top shadow-card"
             />
