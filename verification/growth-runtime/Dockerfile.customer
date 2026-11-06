@@ -1,0 +1,13 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+USER root
+WORKDIR /app
+COPY supervisor.mjs customer-broker.mjs customer-preload.mjs customer-profile.mjs /app/verification/growth-runtime/
+ARG CUSTOMER_PROFILE_HASH
+RUN --network=none node verification/local-supabase/font-response-map.cjs && \
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY=viewflo-synthetic-e2e NEXT_FONT_GOOGLE_MOCKED_RESPONSES=/tmp/viewflo-font-responses.cjs npm run build -- --webpack && \
+    node -e 'const id=require("node:fs").readFileSync(".next/BUILD_ID","utf8").trim(); if(!/^[a-zA-Z0-9_-]{10,80}$/.test(id))process.exit(1);console.log("VIEWFLO_CUSTOMER_BUILD_ID="+id)' && \
+    rm /tmp/viewflo-font-responses.cjs
+LABEL viewflo.verification.customer-profile=${CUSTOMER_PROFILE_HASH}
+USER node
+CMD ["node","verification/growth-runtime/supervisor.mjs"]
